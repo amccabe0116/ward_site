@@ -226,6 +226,15 @@
       <!-- Settings -->
       <section class="pane" id="pane-settings">
         <div class="card">
+          <h3 style="margin-top:0">Ward name</h3>
+          <p class="muted">Used everywhere on the site — the home page title, page headers, calendar exports, texts, and email drafts — instead of editing any files.</p>
+          <div class="inline">
+            <div class="field" style="margin:0"><label for="wn-name">Ward name</label><input id="wn-name" type="text" maxlength="120" placeholder="Your Ward" style="max-width:280px"></div>
+            <button class="btn small" id="wn-save" style="align-self:flex-end">Save</button><span class="muted" id="wn-msg"></span>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:16px">
           <h3 style="margin-top:0">Roll classes</h3>
           <p class="muted">The classes that show on the home page and get their own roll (Primary, Young Men, Sunday School, whatever your ward runs). Add, rename or remove classes here any time — nothing is hardcoded. Each class gets its own check-in window, in Eastern time; outside the window the button greys out on the home page, and check-ins are refused by the database too.</p>
           <div id="rc-list" style="margin-top:8px"><p class="muted">Loading…</p></div>
@@ -299,6 +308,7 @@
     (function () {
       const { C, rpc, el, toast, fmtDate } = NP;
       const $ = id => document.getElementById(id);
+      NP.loadSiteSettings();   // updates C.wardName in place once it resolves; used further below
       // `pass` holds a 12-hour session token from admin_login (or, for older DBs, the passphrase).
       let pass = localStorage.getItem('np_admin_token') || sessionStorage.getItem('np_admin_pass') || '';
       let members = [], dates = [], current = null, att = [], guests = [], notes = [];
@@ -977,6 +987,7 @@
         let rows = [];
         try { rows = await rpc('admin_get_settings', { p_pass: pass }); } catch (e) { $('w-msg').textContent = 'Run supabase/windows.sql first.'; return; }
         const get = k => (rows.find(r => r.key === k) || {}).value;
+        $('wn-name').value = get('ward_name') || '';
         classes = await NP.loadClasses();
         rcClasses = classes.map(c => {
           const [winStart, winEnd] = (get('window_' + c.key) || '-').split('-');
@@ -1015,6 +1026,12 @@
           msg.textContent = 'Done.'; showTextListSummary(j);
         } catch (e) { msg.textContent = 'Not synced: ' + e.message; }
         finally { $('tl-sync').disabled = false; }
+      });
+      $('wn-save').addEventListener('click', async () => {
+        const name = $('wn-name').value.trim();
+        if (name.length < 2 || name.length > 120) { $('wn-msg').textContent = 'Enter a ward name (2–120 characters).'; return; }
+        try { await rpc('admin_set_setting', { p_pass: pass, p_key: 'ward_name', p_value: name }); C.wardName = name; $('wn-msg').textContent = 'Saved.'; }
+        catch (e) { $('wn-msg').textContent = 'Not saved: ' + e.message; }
       });
       $('b-save').addEventListener('click', async () => {
         const digits = $('b-phone').value.replace(/\D/g, '').replace(/^1(\d{10})$/, '$1');

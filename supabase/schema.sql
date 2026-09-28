@@ -480,6 +480,16 @@ end $$;
 grant execute on function public.admin_get_settings(text)              to anon;
 grant execute on function public.admin_set_setting(text, text, text)    to anon;
 
+-- Public: settings safe to show on the site itself (no passphrase needed), such as the ward's
+-- name — set on Leaders › Settings, used everywhere on the site instead of being hardcoded in
+-- config.js, so a ward can rename itself without editing any files.
+create or replace function public.site_settings()
+returns jsonb
+language sql stable security definer set search_path = public, extensions as $$
+  select jsonb_build_object('ward_name', coalesce((select value from settings where key = 'ward_name'), ''))
+$$;
+grant execute on function public.site_settings() to anon;
+
 -- ---------------------------------------------------------------------------
 -- Leaders login: short-lived session tokens + brute-force lockout
 -- ---------------------------------------------------------------------------

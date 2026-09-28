@@ -75,8 +75,9 @@
   <script src="app.js?v=5"></script>
   <script src="posts.js?v=13"></script>
   <script>
-    (function () {
+    (async function () {
       const { el, fmtDate, linkify, escapeHtml, icons } = NP;
+      await NP.loadSiteSettings();
       document.title = NP.C.wardName || 'Ward';
       document.getElementById('ward-name').textContent = NP.C.wardName || 'Ward';
       document.getElementById('footer-ward').textContent = NP.C.wardName || 'Ward';

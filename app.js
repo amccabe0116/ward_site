@@ -100,6 +100,17 @@
     try { const w = await rpc('roll_windows'); if (Array.isArray(w)) windows = w; } catch (e) {}
     return windows;
   }
+
+  // The ward's name, set on Leaders › Settings (not hardcoded in config.js). Updates C.wardName
+  // in place, so anything reading NP.C.wardName after this resolves sees the real name; falls
+  // back silently to whatever config.js has (usually 'Your Ward') if the database isn't reachable.
+  let siteSettingsLoaded = null;
+  function loadSiteSettings() {
+    if (!siteSettingsLoaded) siteSettingsLoaded = rpc('site_settings')
+      .then(s => { if (s && typeof s.ward_name === 'string' && s.ward_name.trim()) C.wardName = s.ward_name.trim(); })
+      .catch(() => {});
+    return siteSettingsLoaded;
+  }
   function tzNowParts() {
     const fmt = new Intl.DateTimeFormat('en-US', { timeZone: C.timeZone, weekday: 'short', hour: '2-digit', minute: '2-digit', hour12: false });
     const p = Object.fromEntries(fmt.formatToParts(new Date()).map(x => [x.type, x.value]));
@@ -150,5 +161,5 @@
     whatsapp: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 1.8a8.2 8.2 0 1 1-4.2 15.3l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 0 1 12 3.8zm-3.3 4.4c-.2 0-.5.1-.7.3-.3.3-1 1-1 2.4s1 2.8 1.2 3c.1.2 2 3.2 5 4.4 2.5 1 3 .8 3.5.7.5-.1 1.7-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.1-.3-.2-.6-.3l-2-1c-.3-.1-.5-.2-.7.2l-.9 1.1c-.2.2-.3.2-.6.1-.3-.2-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6l.5-.5.3-.5c.1-.2 0-.4 0-.5L9.5 8.6c-.2-.5-.4-.4-.6-.4h-.2z"/></svg>',
   };
 
-  window.NP = { C, rpc, currentMeetingDate, fmtDate, el, toast, escapeHtml, linkify, store, icons, loadClasses, loadWindows, windowState, everyTick, fmtTime, getClasses: () => classes };
+  window.NP = { C, rpc, currentMeetingDate, fmtDate, el, toast, escapeHtml, linkify, store, icons, loadClasses, loadWindows, loadSiteSettings, windowState, everyTick, fmtTime, getClasses: () => classes };
 })();

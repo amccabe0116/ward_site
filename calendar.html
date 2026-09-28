@@ -52,12 +52,14 @@
   </main>
 
   <script src="config.js"></script>
+  <script src="app.js"></script>
   <script>
-    (function () {
+    (async function () {
+      await NP.loadSiteSettings();
       const origin = (location.origin || '').replace(/\/$/, '');
       const icsUrl = origin + '/calendar.ics';
       const webcalUrl = icsUrl.replace(/^https?:/, 'webcal:');
-      const wardName = (window.NP_CONFIG && window.NP_CONFIG.wardName) || 'Ward';
+      const wardName = NP.C.wardName || 'Ward';
       document.getElementById('way-apple').href = webcalUrl;
       document.getElementById('way-google').href = 'https://calendar.google.com/calendar/r?cid=' + encodeURIComponent(webcalUrl);
       document.getElementById('way-outlook').href = 'https://outlook.office.com/calendar/0/addfromweb?url=' + encodeURIComponent(webcalUrl) + '&name=' + encodeURIComponent(wardName);

@@ -69,9 +69,10 @@
   <script src="config.js"></script>
   <script src="app.js?v=4"></script>
   <script>
-    (function () {
+    (async function () {
       const { rpc, el, icons } = NP;
       const $ = id => document.getElementById(id);
+      await NP.loadSiteSettings();
       $('eyebrow').textContent = NP.C.wardName || 'Ward';
       document.title = 'Feed the missionaries · ' + (NP.C.wardName || 'Ward');
       const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'], MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];

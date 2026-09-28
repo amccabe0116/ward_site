@@ -46,6 +46,7 @@
   <script>
     (async function () {
       const { C, rpc, el, toast, fmtDate, store, icons } = NP;
+      await NP.loadSiteSettings();
       const params = new URLSearchParams(location.search);
       const cls = params.get('class');
       const classes = await NP.loadClasses();

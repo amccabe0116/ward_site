@@ -1,0 +1,25 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//North Point YSA//northpointysa.com//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Atlanta Temple reopens
+X-WR-TIMEZONE:America/New_York
+X-PUBLISHED-TTL:PT1H
+REFRESH-INTERVAL;VALUE=DURATION:PT1H
+BEGIN:VEVENT
+UID:post-33@northpointysa.com
+DTSTAMP:20260927T041444Z
+DTSTART;VALUE=DATE:20261103
+DTEND;VALUE=DATE:20261104
+SUMMARY:Atlanta Temple reopens
+LOCATION:Atlanta Georgia Temple
+DESCRIPTION:The Atlanta Temple is back open after its two-week maintenan
+ ce closure (October 19 – November 2). Time to book appointments again.\
+ nEverything\, always up to date: https://northpointysa.com
+URL:https://northpointysa.com
+CREATED:20260927T041444Z
+LAST-MODIFIED:20260927T041444Z
+SEQUENCE:0
+END:VEVENT
+END:VCALENDAR

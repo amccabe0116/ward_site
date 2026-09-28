@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Share an announcement · Ward</title>
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#1b2a41">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%231b2a41'/><text x='50' y='68' font-size='52' text-anchor='middle' fill='%23e2c377' font-family='Georgia'>N</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="app.css?v=18">
+</head>
+<body>
+  <header class="hero compact">
+    <a class="back" href="index.html">‹ Home</a>
+    <p class="eyebrow">Ward</p>
+    <h1>Share an announcement</h1>
+    <p class="date">An activity, FHE, service project, institute class — anything the ward should know about.</p>
+  </header>
+
+  <main class="wrap" id="main">
+    <div class="private">
+      <span class="ic" id="review-icon"></span>
+      <span><b>Reviewed first.</b> A ward leader approves each post before it appears on the home page — usually within a day.</span>
+    </div>
+
+    <div id="form"></div>
+
+    <section class="preview-wrap" aria-labelledby="preview-title">
+      <div class="section-title"><h2 id="preview-title">How it will look</h2></div>
+      <div id="preview"></div>
+    </section>
+
+    <div class="notice error" id="error" hidden></div>
+    <div class="actionbar">
+      <button class="btn" id="send">Send for approval</button>
+    </div>
+  </main>
+
+  <script src="config.js"></script>
+  <script src="app.js?v=4"></script>
+  <script src="posts.js?v=13"></script>
+  <script>
+    (function () {
+      const { rpc, el, icons } = NP;
+      const $ = id => document.getElementById(id);
+      $('review-icon').innerHTML = icons.check;
+      const form = NPPosts.form({}, { askWho: true, submitLabel: 'Send for approval' });
+      $('form').appendChild(form.el);
+      const errEl = $('error'), sendBtn = $('send');
+
+      // live preview
+      function paint() {
+        const v = form.values();
+        const box = $('preview'); box.innerHTML = '';
+        if (!v.title && !v.details) { box.appendChild(el('p', { class: 'empty' }, 'Start typing and the post shows up here.')); return; }
+        const prev = form.el.querySelector('.flyer-preview');
+        box.appendChild(NPPosts.card({ title: v.title || 'Untitled', details: v.details, event_date: v.event_date, start_time: v.start_time, end_time: v.end_time, location: v.location, link: v.link, flyer_url: prev && !prev.hidden ? prev.src : '', repeat: v.repeat, repeat_until: v.repeat_until, repeat_show: v.repeat_show, skip_dates: [] }));
+      }
+      form.el.addEventListener('input', paint);
+      form.el.addEventListener('change', () => setTimeout(paint, 50));
+      const mo = new MutationObserver(paint); mo.observe(form.el.querySelector('.flyer-preview'), { attributes: true, attributeFilter: ['src', 'hidden'] });
+      paint();
+
+      function fail(msg) { errEl.textContent = msg; errEl.hidden = false; errEl.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+      sendBtn.addEventListener('click', async () => {
+        errEl.hidden = true;
+        const bad = form.validate(); if (bad) return fail(bad);
+        sendBtn.disabled = true; sendBtn.textContent = 'Sending…';
+        let v = form.values();
+        try {
+          v = await form.finalize();
+          // the repeat fields only go along when used, so a plain post still works before supabase/repeat.sql is run
+          const id = await rpc('submit_post', Object.assign({ p_title: v.title, p_details: v.details, p_event_date: v.event_date, p_start_time: v.start_time, p_end_time: v.end_time, p_location: v.location, p_link: v.link, p_flyer_url: v.flyer_url, p_name: v.name, p_contact: v.contact, p_website: v.website },
+            v.repeat ? { p_repeat: v.repeat, p_repeat_until: v.repeat_until, p_repeat_show: v.repeat_show } : {}));
+          $('main').hidden = true;
+          const view = el('div', { class: 'success' }, [
+            el('div', { class: 'check', html: icons.check }),
+            el('h2', {}, 'Sent for approval'),
+            el('p', {}, 'Thanks, ' + v.name.split(' ')[0] + '. A ward leader will look it over and it will show up on the home page once it’s approved.'),
+            el('a', { class: 'btn', href: 'index.html' }, 'Back to the home page'),
+            el('button', { class: 'btn secondary', type: 'button', onclick: () => location.reload() }, 'Share another'),
+          ]);
+          document.querySelector('.hero').after(view);
+          try { localStorage.setItem('np_post_who', JSON.stringify({ name: v.name, contact: v.contact })); } catch (e) {}
+        } catch (e) {
+          sendBtn.disabled = false; sendBtn.textContent = 'Send for approval';
+          fail(/submit_post/.test(e.message) ? (v.repeat ? 'Repeating posts are not switched on yet (the leaders need to run supabase/repeat.sql) — try it without the repeat for now.' : 'Posting is not switched on yet (the leaders need to run supabase/posts.sql).') : e.message);
+        }
+      });
+      // remember who you are between posts
+      try { const who = JSON.parse(localStorage.getItem('np_post_who') || 'null'); if (who) { form.fields.name.value = who.name || ''; form.fields.contact.value = who.contact || ''; } } catch (e) {}
+      form.focus();
+    })();
+  </script>
+</body>
+</html>

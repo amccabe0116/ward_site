@@ -1,0 +1,27 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//North Point YSA//northpointysa.com//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:First Presidency’s Christmas Devotional
+X-WR-TIMEZONE:America/New_York
+X-PUBLISHED-TTL:PT1H
+REFRESH-INTERVAL;VALUE=DURATION:PT1H
+BEGIN:VEVENT
+UID:post-22@northpointysa.com
+DTSTAMP:20260927T025844Z
+DTSTART;VALUE=DATE:20261206
+DTEND;VALUE=DATE:20261207
+SUMMARY:First Presidency’s Christmas Devotional
+DESCRIPTION:The First Presidency’s Christmas devotional opens the Christ
+ mas season with messages and music about the birth of Jesus Christ. Wat
+ ch on ChurchofJesusChrist.org or the Gospel Library app — time to be an
+ nounced\, and it stays available afterward.\nSign up / details: https:/
+ /events.churchofjesuschrist.org\nEverything\, always up to date: https:
+ //northpointysa.com
+URL:https://events.churchofjesuschrist.org
+CREATED:20260927T025844Z
+LAST-MODIFIED:20260927T025844Z
+SEQUENCE:0
+END:VEVENT
+END:VCALENDAR

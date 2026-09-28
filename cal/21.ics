@@ -1,0 +1,25 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//North Point YSA//northpointysa.com//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:North Point YSA Ward Christmas Party
+X-WR-TIMEZONE:America/New_York
+X-PUBLISHED-TTL:PT1H
+REFRESH-INTERVAL;VALUE=DURATION:PT1H
+BEGIN:VEVENT
+UID:post-21@northpointysa.com
+DTSTAMP:20260927T035530Z
+DTSTART;VALUE=DATE:20261205
+DTEND;VALUE=DATE:20261206
+SUMMARY:North Point YSA Ward Christmas Party
+LOCATION:Roswell Stake Center\, 500 Norcross Street
+DESCRIPTION:North Point Ward Christmas party — food\, folks and fun! Bri
+ ng your friends. Time and details coming.\nEverything\, always up to da
+ te: https://northpointysa.com
+URL:https://northpointysa.com
+CREATED:20260927T025844Z
+LAST-MODIFIED:20260927T035530Z
+SEQUENCE:56
+END:VEVENT
+END:VCALENDAR

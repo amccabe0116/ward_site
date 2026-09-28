@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Meet with the Bishop · Ward</title>
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#1b2a41">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%231b2a41'/><text x='50' y='68' font-size='52' text-anchor='middle' fill='%23e2c377' font-family='Georgia'>N</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="app.css?v=18">
+</head>
+<body>
+  <header class="hero compact">
+    <a class="back" href="index.html">‹ Home</a>
+    <p class="eyebrow">Private request</p>
+    <h1>Meet with the Bishop</h1>
+    <p class="date">An executive secretary will reach out to schedule a time.</p>
+  </header>
+
+  <main class="wrap" id="main">
+    <div class="private">
+      <span class="ic" id="lock-icon"></span>
+      <span><b>Private.</b> Only the bishopric and the executive secretaries see this.</span>
+    </div>
+
+    <div class="field">
+      <label for="name">Your name</label>
+      <input id="name" type="text" maxlength="80" autocomplete="name" required>
+    </div>
+    <div class="field">
+      <label for="phone">Phone number</label>
+      <input id="phone" type="tel" maxlength="40" autocomplete="tel" inputmode="tel" required>
+    </div>
+    <div class="field">
+      <label for="email">Email</label>
+      <input id="email" type="email" maxlength="120" autocomplete="email" inputmode="email" required>
+    </div>
+
+    <label class="check">
+      <input id="recommend" type="checkbox">
+      <span>This is for a <b>temple recommend interview</b></span>
+    </label>
+
+    <div class="field">
+      <label for="note">Anything the secretary should know? <span class="opt">(optional — good days or times, etc.)</span></label>
+      <textarea id="note" rows="3" maxlength="1000"></textarea>
+    </div>
+
+    <div class="notice error" id="error" hidden></div>
+    <div class="actionbar">
+      <button class="btn" id="send">Request a meeting</button>
+    </div>
+  </main>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+  <script>
+    (function () {
+      const { rpc, el, icons } = NP;
+      document.getElementById('lock-icon').innerHTML = icons.lock;
+      const $ = id => document.getElementById(id);
+      const sendBtn = $('send'), errEl = $('error');
+      function fail(msg, focusEl) { errEl.textContent = msg; errEl.hidden = false; if (focusEl) focusEl.focus(); }
+      sendBtn.addEventListener('click', async () => {
+        errEl.hidden = true;
+        const name = $('name').value.trim(), phone = $('phone').value.trim(), email = $('email').value.trim();
+        if (name.length < 2) return fail('Please enter your name.', $('name'));
+        if (phone.replace(/\D/g, '').length < 7) return fail('Please enter a phone number we can reach you at.', $('phone'));
+        if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return fail('Please enter a valid email address.', $('email'));
+        sendBtn.disabled = true; sendBtn.textContent = 'Sending…';
+        try {
+          const id = await rpc('submit_meeting_request', { p_name: name, p_phone: phone, p_email: email, p_temple_recommend: $('recommend').checked, p_note: $('note').value });
+          // tell the Google script so the executive secretary gets a text right away (it can only
+          // ever text a real request once, so nothing here needs a secret); a miss is swept up later
+          if (NP.C.sheetsRefreshUrl && id) fetch(NP.C.sheetsRefreshUrl, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ action: 'bishop', id }) }).catch(() => {});
+          $('main').hidden = true;
+          const view = el('div', { class: 'success' }, [
+            el('div', { class: 'check', html: icons.check }),
+            el('h2', {}, 'Request received'),
+            el('p', {}, 'Thank you, ' + name.split(' ')[0] + '. One of the executive secretaries will reach out to you' + ($('recommend').checked ? ' to schedule your temple recommend interview.' : ' to set up a time with the Bishop.')),
+            el('a', { class: 'btn', href: 'index.html', style: 'text-decoration:none' }, 'Back to home'),
+          ]);
+          document.body.appendChild(view); window.scrollTo(0, 0);
+        } catch (e) {
+          fail(e.message); sendBtn.disabled = false; sendBtn.textContent = 'Request a meeting';
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

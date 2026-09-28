@@ -1,0 +1,27 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//North Point YSA//northpointysa.com//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Worldwide Devotional for Young Adults
+X-WR-TIMEZONE:America/New_York
+X-PUBLISHED-TTL:PT1H
+REFRESH-INTERVAL;VALUE=DURATION:PT1H
+BEGIN:VEVENT
+UID:post-24@northpointysa.com
+DTSTAMP:20260927T025844Z
+DTSTART:20270208T010000Z
+DTEND:20270208T020000Z
+SUMMARY:Worldwide Devotional for Young Adults
+DESCRIPTION:Elder Ronald A. Rasband of the Quorum of the Twelve speaks t
+ o young adults (18–35) around the world. 8:00 PM Eastern (6:00 PM Mount
+ ain)\, about an hour. Watch live on ChurchofJesusChrist.org or the Gosp
+ el Library app\, or gather with friends to watch it together.\nSign up 
+ / details: https://events.churchofjesuschrist.org\nEverything\, always 
+ up to date: https://northpointysa.com
+URL:https://events.churchofjesuschrist.org
+CREATED:20260927T025844Z
+LAST-MODIFIED:20260927T025844Z
+SEQUENCE:0
+END:VEVENT
+END:VCALENDAR

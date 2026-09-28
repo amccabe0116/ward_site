@@ -1,0 +1,29 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//North Point YSA//northpointysa.com//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Till Death Do Us Part Halloween Party
+X-WR-TIMEZONE:America/New_York
+X-PUBLISHED-TTL:PT1H
+REFRESH-INTERVAL;VALUE=DURATION:PT1H
+BEGIN:VEVENT
+UID:post-17@northpointysa.com
+DTSTAMP:20260926T024647Z
+DTSTART:20261031T230000Z
+DTEND:20261101T030000Z
+SUMMARY:Till Death Do Us Part Halloween Party
+LOCATION:1275 Flat Shoals Rd SE Conyers\, GA  30013
+DESCRIPTION:DJ and Dancing\, Costume Contest\, Photo Booth\,  Mocktail B
+ ar\, Treats\, Games\, and A Fun Time\nSign up / details: https://docs.g
+ oogle.com/forms/d/e/1FAIpQLSc-Xs_NcHely6ppnSjNpUvJxUFYwozlHLGe41ANTey9x
+ iZxog/viewform\nFlyer: https://utkbhlyvmfbtjyfqeoze.supabase.co/storage
+ /v1/object/public/flyers/uploads/c323fb5d-6c6d-41a3-8149-908575f385ac.j
+ pg\nEverything\, always up to date: https://northpointysa.com
+URL:https://docs.google.com/forms/d/e/1FAIpQLSc-Xs_NcHely6ppnSjNpUvJxUFY
+ wozlHLGe41ANTey9xiZxog/viewform
+CREATED:20260924T101737Z
+LAST-MODIFIED:20260926T024647Z
+SEQUENCE:2429
+END:VEVENT
+END:VCALENDAR

@@ -1,0 +1,27 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//North Point YSA//northpointysa.com//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Easter Sunday
+X-WR-TIMEZONE:America/New_York
+X-PUBLISHED-TTL:PT1H
+REFRESH-INTERVAL;VALUE=DURATION:PT1H
+BEGIN:VEVENT
+UID:post-25@northpointysa.com
+DTSTAMP:20260927T025844Z
+DTSTART;VALUE=DATE:20270328
+DTEND;VALUE=DATE:20270329
+SUMMARY:Easter Sunday
+DESCRIPTION:Holy Week runs from Palm Sunday\, March 21\, to Easter Sunda
+ y\, March 28. Easter Sunday is a special sacrament meeting with talks a
+ nd music focused on the Savior\, and no second-hour classes — a great S
+ unday to invite friends and family. Holy Week resources at Easter.Churc
+ hofJesusChrist.org.\nSign up / details: https://easter.churchofjesuschr
+ ist.org\nEverything\, always up to date: https://northpointysa.com
+URL:https://easter.churchofjesuschrist.org
+CREATED:20260927T025844Z
+LAST-MODIFIED:20260927T025844Z
+SEQUENCE:0
+END:VEVENT
+END:VCALENDAR

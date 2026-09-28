@@ -1,0 +1,37 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//North Point YSA//northpointysa.com//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Stake Conference Choir - Invitation
+X-WR-TIMEZONE:America/New_York
+X-PUBLISHED-TTL:PT1H
+REFRESH-INTERVAL;VALUE=DURATION:PT1H
+BEGIN:VEVENT
+UID:post-14@northpointysa.com
+DTSTAMP:20260926T031517Z
+DTSTART:20261025T230000Z
+DTEND:20261026T000000Z
+RRULE:FREQ=WEEKLY;BYDAY=SU;UNTIL=20261116T045900Z
+SUMMARY:Stake Conference Choir - Invitation
+LOCATION:Roswell Stake Center\, 500 Norcross Street
+DESCRIPTION:Rehearsals: Four 1-hour practices on Sunday evenings—October
+  25\, November 1\, November 8\, and November 15—from 7:00 pm to 8:00 pm
+  in the Roswell Stake Center chapel.\n\nPerformance: Sunday\, November 
+ 22 at 10:00am General Session (Choir gathers at 9:15 am in the Relief S
+ ociety Room). Sheet music and practice tracks will be provided in advan
+ ce.\n\nInstrumentalists & Accompanists: If you play an instrument\, pia
+ no\, or organ and are interested in accompanying the choir or offering 
+ prelude\, postlude\, or special numbers\, we would love to have your ta
+ lents.\n\nPlease take a moment to register at the link below so Camiah 
+ and the music committee can prepare adequate sheet music and seating:\n
+ Sign up / details: https://forms.gle/Ht1tdQE3R5khzroC9\nFlyer: https://
+ utkbhlyvmfbtjyfqeoze.supabase.co/storage/v1/object/public/flyers/upload
+ s/aae7b291-65df-4ca2-861b-d71580f003ad.jpg\nEverything\, always up to d
+ ate: https://northpointysa.com
+URL:https://forms.gle/Ht1tdQE3R5khzroC9
+CREATED:20260920T025122Z
+LAST-MODIFIED:20260926T031517Z
+SEQUENCE:8663
+END:VEVENT
+END:VCALENDAR

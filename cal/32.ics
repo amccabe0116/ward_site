@@ -1,0 +1,26 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//North Point YSA//northpointysa.com//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Atlanta Temple closed for maintenance
+X-WR-TIMEZONE:America/New_York
+X-PUBLISHED-TTL:PT1H
+REFRESH-INTERVAL;VALUE=DURATION:PT1H
+BEGIN:VEVENT
+UID:post-32@northpointysa.com
+DTSTAMP:20260927T041444Z
+DTSTART;VALUE=DATE:20261019
+DTEND;VALUE=DATE:20261020
+SUMMARY:Atlanta Temple closed for maintenance
+LOCATION:Atlanta Georgia Temple
+DESCRIPTION:The Atlanta Temple is closed for its regular maintenance and
+  cleaning from Monday\, October 19 through Monday\, November 2. Get you
+ r temple trips in before the 19th\, or plan for after it reopens.\nEver
+ ything\, always up to date: https://northpointysa.com
+URL:https://northpointysa.com
+CREATED:20260927T041444Z
+LAST-MODIFIED:20260927T041444Z
+SEQUENCE:0
+END:VEVENT
+END:VCALENDAR

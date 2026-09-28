@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Till Death Do Us Part Halloween Party · North Point YSA</title>
+  <meta property="og:site_name" content="North Point YSA">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://northpointysa.com/e/17">
+  <meta property="og:title" content="Till Death Do Us Part Halloween Party">
+  <meta property="og:description" content="Saturday, Oct 31 · 7 – 11 PM · 1275 Flat Shoals Rd SE Conyers, GA  30013">
+  <meta name="description" content="Saturday, Oct 31 · 7 – 11 PM · 1275 Flat Shoals Rd SE Conyers, GA  30013">
+  <meta property="og:image" content="https://utkbhlyvmfbtjyfqeoze.supabase.co/storage/v1/object/public/flyers/uploads/c323fb5d-6c6d-41a3-8149-908575f385ac.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://utkbhlyvmfbtjyfqeoze.supabase.co/storage/v1/object/public/flyers/uploads/c323fb5d-6c6d-41a3-8149-908575f385ac.jpg">
+  <script>window.NP_POST_ID = 17;</script>
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#1b2a41">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%231b2a41'/><text x='50' y='68' font-size='52' text-anchor='middle' fill='%23e2c377' font-family='Georgia'>N</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/app.css?v=18">
+</head>
+<body>
+  <!-- One post, on its own page: the short link that goes into text reminders. Two forms:
+       e.html?id=5 (this file, always works) and e/5 — a copy the Apps Script publishes per live post
+       with the post's Open Graph tags in the head, so a text message previews the flyer. Paths are
+       absolute so the copy works from /e/. -->
+  <header class="hero compact">
+    <a class="back" href="/">‹ Home</a>
+    <p class="eyebrow">North Point YSA</p>
+    <h1 id="h">What’s happening</h1>
+  </header>
+
+  <main class="wrap">
+    <div id="post"><p class="empty">Loading…</p></div>
+    <p class="cal-hint" style="margin-top:18px"><a href="/">Everything that’s coming up</a> · <a href="/calendar.html">Subscribe to the ward calendar</a></p>
+  </main>
+
+  <script src="/config.js"></script>
+  <script src="/app.js?v=4"></script>
+  <script src="/posts.js?v=13"></script>
+  <script>
+    (function () {
+      const box = document.getElementById('post');
+      const id = Number(window.NP_POST_ID || new URLSearchParams(location.search).get('id'));
+      const gone = () => { box.innerHTML = ''; box.appendChild(NP.el('p', { class: 'empty' }, 'That announcement isn’t up any more — it may have already happened.')); };
+      if (!id) return gone();
+      NP.rpc('posts_public').then(rows => {
+        const p = (rows || []).find(x => x.id === id);
+        if (!p) return gone();
+        document.title = p.title + ' · North Point YSA';
+        document.getElementById('h').textContent = p.event_date ? 'Coming up' : 'Announcement';
+        box.innerHTML = '';
+        // a repeating post shows its next date (the card works that out itself)
+        box.appendChild(NPPosts.card(p));
+      }).catch(gone);
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//North Point YSA//northpointysa.com//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Salt Lake Temple Celebration begins
+X-WR-TIMEZONE:America/New_York
+X-PUBLISHED-TTL:PT1H
+REFRESH-INTERVAL;VALUE=DURATION:PT1H
+BEGIN:VEVENT
+UID:post-27@northpointysa.com
+DTSTAMP:20260927T025845Z
+DTSTART;VALUE=DATE:20270405
+DTEND;VALUE=DATE:20270406
+SUMMARY:Salt Lake Temple Celebration begins
+DESCRIPTION:April 5 through October 1\, 2027: the renovated Salt Lake Te
+ mple opens for tours — in person on Temple Square and virtually — ahead
+  of its rededication. An opening event with music and performances stre
+ ams the first weekend (April 9–10). Details at TempleSquare.org.\nSign 
+ up / details: https://www.templesquare.org\nEverything\, always up to d
+ ate: https://northpointysa.com
+URL:https://www.templesquare.org
+CREATED:20260927T025845Z
+LAST-MODIFIED:20260927T025845Z
+SEQUENCE:0
+END:VEVENT
+END:VCALENDAR

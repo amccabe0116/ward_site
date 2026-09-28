@@ -1,0 +1,27 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//North Point YSA//northpointysa.com//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:YSA Dance
+X-WR-TIMEZONE:America/New_York
+X-PUBLISHED-TTL:PT1H
+REFRESH-INTERVAL;VALUE=DURATION:PT1H
+BEGIN:VEVENT
+UID:post-15@northpointysa.com
+DTSTAMP:20260920T151525Z
+DTSTART:20260926T230000Z
+DTEND:20260927T023000Z
+SUMMARY:YSA Dance
+LOCATION:5055 HOLT ROAD ACWORTH\, GA
+DESCRIPTION:The Kennesaw branch has invited us to this dance! It officia
+ lly starts at 7pm next Saturday. Come for a good time!!\nFlyer: https:/
+ /utkbhlyvmfbtjyfqeoze.supabase.co/storage/v1/object/public/flyers/uploa
+ ds/04b51553-d3ff-4cc1-ab6c-3b91882730be.jpg\nEverything\, always up to 
+ date: https://northpointysa.com
+URL:https://northpointysa.com
+CREATED:20260920T151430Z
+LAST-MODIFIED:20260920T151525Z
+SEQUENCE:0
+END:VEVENT
+END:VCALENDAR

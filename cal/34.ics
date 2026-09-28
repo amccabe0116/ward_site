@@ -1,0 +1,31 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//North Point YSA//northpointysa.com//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Hulacoween
+X-WR-TIMEZONE:America/New_York
+X-PUBLISHED-TTL:PT1H
+REFRESH-INTERVAL;VALUE=DURATION:PT1H
+BEGIN:VEVENT
+UID:post-34@northpointysa.com
+DTSTAMP:20260927T150122Z
+DTSTART:20261016T223000Z
+DTEND:20261017T035900Z
+SUMMARY:Hulacoween
+LOCATION:Hulaco Youth & Family Camp (Baileyton\, AL)
+DESCRIPTION:HELLO NORTH POINT YSA!\nHuntsville & Birmingham AL YSAs are 
+ holding another annual Hulacoween Fri\, Oct 16 - Sat\, Oct 17 @ Camp Hu
+ laco.\nWe’d love to have y’all join us for this event 🎃\n\nYou MUST RS
+ VP by Mon\, Oct 12 (esp if you want food & a place to sleep).\n\n*If po
+ ssible\, please announce this event during your announcements at church
+ *\nSee you there 🙂\nSign up / details: https://forms.gle/mqRe4vKbNp3mW
+ wUf8\nFlyer: https://utkbhlyvmfbtjyfqeoze.supabase.co/storage/v1/object
+ /public/flyers/uploads/b2ef4e0d-d49f-4055-8e2f-c531c9a8ef27.jpg\nEveryt
+ hing\, always up to date: https://northpointysa.com
+URL:https://forms.gle/mqRe4vKbNp3mWwUf8
+CREATED:20260927T145713Z
+LAST-MODIFIED:20260927T150122Z
+SEQUENCE:4
+END:VEVENT
+END:VCALENDAR

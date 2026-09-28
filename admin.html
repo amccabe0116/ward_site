@@ -1,0 +1,1102 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Leaders · Ward</title>
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#1b2a41">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%231b2a41'/><text x='50' y='68' font-size='52' text-anchor='middle' fill='%23e2c377' font-family='Georgia'>W</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="app.css?v=18">
+  <style>
+    .wrap { max-width: 1100px; }
+    .login { max-width: 380px; margin: 40px auto; }
+  </style>
+</head>
+<body>
+  <header class="hero compact">
+    <a class="back" href="index.html">‹ Home</a>
+    <p class="eyebrow">Leaders</p>
+    <h1>Attendance &amp; Members</h1>
+  </header>
+
+  <main class="wrap">
+    <div id="login" class="card login" hidden>
+      <div class="field">
+        <label for="pass">Passphrase</label>
+        <input id="pass" type="password" autocomplete="current-password">
+      </div>
+      <button class="btn" id="login-btn">Open</button>
+      <p class="muted" id="login-msg"></p>
+      <p class="muted" style="font-size:12px">Signed in for 12 hours on this device. Ten wrong tries locks the page for 15 minutes.</p>
+    </div>
+
+    <div id="app" hidden>
+      <div class="tabs">
+        <button class="tab on" data-pane="overview">Overview</button>
+        <button class="tab" data-pane="attendance">Attendance</button>
+        <button class="tab" data-pane="notes">Inbox<span class="badge" id="notes-badge" hidden></span></button>
+        <button class="tab" data-pane="announcements">Announcements<span class="badge" id="posts-badge" hidden></span></button>
+        <button class="tab" data-pane="callings">Callings</button>
+        <button class="tab" data-pane="members">Members</button>
+        <button class="tab" data-pane="service">Service</button>
+        <button class="tab" data-pane="sync">LCR</button>
+        <button class="tab" data-pane="settings">Settings</button>
+        <button class="tab" id="logout" style="margin-left:auto">Lock</button>
+      </div>
+
+      <!-- Overview: the quick-reference page (overview.js) -->
+      <section class="pane on" id="pane-overview">
+        <div class="inline" style="justify-content:space-between">
+          <span class="muted">A quick look at the ward — from LCR and the callings sheet.</span>
+          <button class="chip" id="ov-refresh">Refresh</button>
+        </div>
+        <div id="ov"><p class="muted">Loading…</p></div>
+      </section>
+
+      <!-- Attendance -->
+      <section class="pane" id="pane-attendance">
+        <div class="inline">
+          <div class="field" style="margin:0"><label for="date">Sunday</label><select id="date"></select></div>
+          <button class="btn small secondary" id="copy">Copy summary</button>
+          <button class="btn small secondary" id="refresh">Refresh</button>
+        </div>
+        <div class="stats" id="stats"></div>
+        <div id="att"></div>
+        <details style="margin-top:14px">
+          <summary class="muted">Add someone who didn't check in</summary>
+          <div class="inline" style="margin-top:8px">
+            <div class="field" style="margin:0;flex:1"><label for="add-member">Member</label><select id="add-member"></select></div>
+            <div class="field" style="margin:0"><label for="add-class">Class</label><select id="add-class"></select></div>
+            <button class="btn small" id="add-btn" style="align-self:flex-end">Add</button>
+          </div>
+        </details>
+      </section>
+
+      <!-- Notes to leadership -->
+      <section class="pane" id="pane-notes">
+        <div class="inline" style="justify-content:space-between">
+          <span class="muted">Meeting requests for the Bishop. Only people signed in here can see them.</span>
+          <label class="inline muted" style="gap:6px"><input id="notes-handled" type="checkbox"> Show handled</label>
+        </div>
+        <div id="notes" style="margin-top:4px"></div>
+      </section>
+
+      <!-- Announcements: posts (approve / edit / add) + the weekly email text -->
+      <section class="pane" id="pane-announcements">
+        <div class="inline" style="justify-content:space-between">
+          <span class="muted">Posts show on the home page in date order and expire by themselves — an event disappears the day after it happens, a notice without a date after 30 days. Anything sent in from the site waits here for approval.</span>
+          <span class="inline"><button class="btn small secondary" id="post-email">Email version</button><button class="btn small" id="post-new">+ New post</button></span>
+        </div>
+        <div class="card" id="post-editor" style="margin-top:12px" hidden></div>
+        <div class="card" id="post-email-panel" style="margin-top:12px" hidden>
+          <div class="inline" style="justify-content:space-between"><h3 style="margin:0">The weekly email, from the posts</h3><button class="chip" id="pe-close">Close</button></div>
+          <p class="muted">Everything live on the home page right now, in date order. In LCR (<a href="https://lcr.churchofjesuschrist.org/mlt/messaging?lang=eng" target="_blank" rel="noopener">Send a Message</a>): paste the subject, <b>Copy formatted</b> and paste into the message — headings, bold, links and lists come through; images don't, so tick the flyers below, <b>Download selected (.zip)</b>, unzip, and drop the whole set into the Attachments box. <b>Copy plain text</b> is there if you ever need it.</p>
+          <p class="muted small" style="margin:-4px 0 10px">Every event carries <b>Add to calendar</b> links (Google, and an .ics file for Apple / Outlook), and the header points at <a href="calendar.html" target="_blank" rel="noopener">calendar.html</a>, where people subscribe to the whole ward calendar once. The files behind those are published by the Google script whenever a post changes. <button class="chip" id="pe-cal-rebuild" type="button">Rebuild calendar files</button> <span id="pe-cal-msg"></span></p>
+          <div class="field"><label for="pe-title">Subject / title</label><input id="pe-title" type="text"></div>
+          <div class="field"><label for="pe-header">Top of the email <span class="opt">(the contact-us block — same every week)</span></label><textarea id="pe-header" rows="6"></textarea></div>
+          <div class="field"><label for="pe-footer">Bottom of the email</label><textarea id="pe-footer" rows="2"></textarea></div>
+          <div class="inline"><button class="btn small secondary" id="pe-save">Save wording</button><button class="btn small" id="pe-copy-html">Copy formatted</button><button class="btn small secondary" id="pe-copy-text">Copy plain text</button><span class="muted" id="pe-msg"></span></div>
+          <h4 class="pe-title">Flyers to attach</h4>
+          <p class="muted small" style="margin:0 0 8px">Tick the ones to send, then <b>Download selected</b> gives you one .zip — it unzips to a folder, so select all in the folder and drag them onto LCR's Attachments box (or use its Browse button and pick them all at once).</p>
+          <div class="flyer-pick" id="pe-flyer-list"></div>
+          <div class="inline" style="margin-top:8px"><button class="btn small" id="pe-flyers-zip">Download selected (.zip)</button><button class="chip" id="pe-flyers-all">All</button><button class="chip" id="pe-flyers-none">None</button><button class="chip" id="pe-flyers-each">One by one instead</button></div>
+          <h4 class="pe-title">Preview</h4>
+          <div id="pe-preview" style="border:1px solid var(--line);border-radius:12px;padding:16px;background:#fff"></div>
+          <details style="margin-top:12px"><summary class="muted">Plain-text version</summary><textarea id="pe-plain" rows="18" readonly style="width:100%;margin-top:8px;font-family:ui-monospace,Menlo,monospace;font-size:13px"></textarea></details>
+        </div>
+        <div id="post-queue" style="margin-top:12px"><p class="muted">Loading…</p></div>
+        <details style="margin-top:24px" id="ann-email-details">
+          <summary class="muted">This week's announcements email — the text shown under the posts on the home page</summary>
+          <div class="card ann-editor" style="margin-top:10px">
+            <div class="inline" style="justify-content:space-between">
+              <h3 style="margin:0">This week's announcements</h3>
+              <span class="muted" id="ann-meta"></span>
+            </div>
+            <p class="muted">Edits go live on the home page within a minute. Every Sunday night the new email replaces this automatically.</p>
+            <div class="field"><label for="ann-text">Text</label><textarea id="ann-text"></textarea></div>
+            <div class="field"><label>Flyers &amp; files</label><div class="ann-files" id="ann-files"></div></div>
+            <div class="inline"><button class="btn small" id="ann-save">Save</button><button class="btn small secondary" id="ann-load-json">Start from what's on the site now</button><span class="muted" id="ann-msg"></span></div>
+          </div>
+        </details>
+      </section>
+
+      <!-- Callings: members-without-callings meeting tool (callings.js) -->
+      <section class="pane" id="pane-callings">
+        <div class="inline cal-top">
+          <button class="btn small" id="cal-start">▶ Start meeting</button>
+          <input class="search" id="cal-search" type="search" placeholder="Find a name" style="max-width:240px;padding-left:40px">
+          <span class="muted" id="cal-meta" style="margin-left:auto"></span>
+        </div>
+        <div class="chips" id="cal-filters"></div>
+        <details class="legend">
+          <summary class="muted">What the tags mean</summary>
+          <dl class="legend-list">
+            <div><dt><span class="pill flag">Warning</span></dt><dd>Attending a YSA ward is optional — we're telling them that if they don't start showing up, their records go back to their home ward. <em>Send the warning message</em> on their slide texts/emails them and records the date.</dd></div>
+            <div><dt><span class="pill magnet">Magnet</span></dt><dd>Their records came in without a new-member meeting, so they're being sent back to their previous ward. <em>Send the magnet message</em> does the same for this case.</dd></div>
+            <div><dt><span class="pill off">Move</span> <span class="pill off">Aged out</span></dt><dd>From a note in parentheses after the name on the sheet, e.g. "Shane Woods (aged out)". Other Notes itself is just text — nothing is read out of it.</dd></div>
+            <div><dt><span class="pill off">Nothing yet</span> <span class="pill wait">Proposed</span> <span class="pill wait">Texted</span> <span class="pill need">Answered / Declined</span> <span class="pill ok">Accepted / Sustained</span></dt><dd>Where the calling stands, from the Proposed / Who texts / Texted / Answer / Sustained columns.</dd></div>
+            <div><dt><span class="pill new">new</span> <span class="pill new">not on sheet</span></dt><dd><em>new</em> = moved in within the last 30 days (LCR's move-in date; it drops off by itself). <em>not on sheet</em> = on LCR's report but with no row on the sheet yet — <em>Add to sheet</em> on their slide (or <em>Add all</em> on this filter) makes the row, pre-filled from LCR and their move-in form.</dd></div>
+            <div><dt><span class="pill ok">Has a calling?</span></dt><dd>On the sheet and still on the ward roll, but no longer on LCR's Members without Callings report — so a calling was most likely recorded in LCR. Check their Callings/Classes tab in LCR; once it's done, <em>Remove</em> on their slide takes them off the sheet.</dd></div>
+            <div><dt><span class="pill warn">Not in LCR</span></dt><dd>On the sheet but not on the ward roll at all — their records moved out (or were never here). <em>Remove</em> deletes the row.</dd></div>
+            <div><dt><span class="pill due">Ready to move out</span></dt><dd>The warning / magnet message went out long enough ago (21 days for Warning, 7 for Magnet — change it under Settings) that it's time to move their records. The date comes from the "Flag sent" column, which is filled in automatically when you send from here or can be typed in.</dd></div>
+            <div><dt><span class="pill wait">✎ pending</span></dt><dd>Edited here on the site; it goes into the Google Sheet the next time the sync runs.</dd></div>
+            <div><dt><span class="pill warn">Removed</span> <span class="pill warn">Left off the sheet</span></dt><dd><em>Remove</em> on a slide takes someone off this list: their row is deleted from the Google Sheet and they stay hidden until LCR stops listing them (records moved, or a calling recorded). <em>Leave off the sheet</em> does the same for someone who has no row on purpose (with a note saying why) — they stop counting as “not on sheet” and <em>Add all</em> skips them. Both are under the <em>Removed / left off</em> filter, where <em>Back on the list</em> undoes it.</dd></div>
+          </dl>
+        </details>
+        <div id="cal-list" style="margin-top:12px"><p class="empty">Loading…</p></div>
+        <p class="muted cal-foot">
+          <a id="cal-open-sheet" href="#" target="_blank" rel="noopener" hidden>Open the callings sheet ↗</a>
+          <a id="cal-open-form" href="#" target="_blank" rel="noopener" hidden>Open the new-member responses ↗</a>
+          <button class="chip" id="cal-refresh">Refresh from Google Sheets</button>
+          <span>Click a row to open that person. In the meeting, use ← → (or swipe) to move through people; Esc closes.</span>
+        </p>
+      </section>
+
+      <!-- Members -->
+      <section class="pane" id="pane-members">
+        <div class="inline" style="justify-content:space-between">
+          <span class="muted" id="members-count"></span>
+          <input class="search" id="members-search" type="search" placeholder="Filter" style="max-width:260px;padding-left:40px">
+        </div>
+        <!-- where each person is in the callings process (pipeline.js) -->
+        <div class="chips members-chips" id="members-chips"></div>
+        <div id="members"></div>
+        <details style="margin-top:16px">
+          <summary class="muted">Import / refresh members from JSON</summary>
+          <p class="muted">Paste the JSON produced by the LCR sync script (array of members). Members missing from the list are marked inactive.</p>
+          <div class="field"><textarea id="import-json" placeholder='[{"lcr_uuid":"…","name":"Last, First","display_name":"First Last","sex":"M","org":"EQ","lcr_classes":[…]}]'></textarea></div>
+          <button class="btn small" id="import-btn">Import</button>
+          <span class="muted" id="import-msg"></span>
+        </details>
+      </section>
+
+      <!-- LCR sync -->
+      <!-- Service: missionary meals (supabase/meals.sql) -->
+      <section class="pane" id="pane-service">
+        <div class="card">
+          <div class="inline" style="justify-content:space-between">
+            <h3 style="margin:0">Missionary meals</h3>
+            <label class="switch"><input type="checkbox" id="ml-enabled"><span class="knob"></span><b id="ml-enabled-label">Sign-ups are on</b></label>
+          </div>
+          <p class="muted" style="margin:8px 0 0"><code>meals.html</code>: one meal per day per companionship you set up below — could be Elders, Sisters, or both, and it can change any time the assignment does. A brother taking a sister companionship out names the sister coming along; each companionship is fed in its own area (the area text below shows on the page). The phone number is only shown to someone who has just booked.</p>
+          <details style="margin-top:10px" open>
+            <summary class="muted">Companionships, areas, numbers</summary>
+            <p class="muted small" style="margin:8px 0">Add a row for each companionship being fed (elders, a sisters' companionship, whatever the ward has right now — change it any time assignments do). The key is just an internal id (lowercase letters/numbers/underscore).</p>
+            <div id="ml-settings" style="margin-top:8px"></div>
+            <div class="inline" style="margin-top:6px;align-items:flex-end">
+              <div class="field" style="margin:0"><label for="ml-new-key">Add companionship <span class="opt">(key, e.g. elders)</span></label><input id="ml-new-key" type="text" maxlength="40" style="max-width:150px"></div>
+              <div class="field" style="margin:0"><button class="btn small secondary" id="ml-add-comp" type="button">+ Add</button></div>
+            </div>
+            <div class="inline" style="margin-top:10px;align-items:flex-end">
+              <div class="field" style="margin:0"><label for="ml-days">Book up to (days ahead)</label><input id="ml-days" type="number" min="7" max="120" style="max-width:110px"></div>
+              <div class="field" style="margin:0"><button class="btn small" id="ml-save" type="button">Save settings</button></div>
+              <span class="muted small" id="ml-save-msg"></span>
+            </div>
+          </details>
+          <details style="margin-top:10px">
+            <summary class="muted">Book a meal for someone (phone sign-ups)</summary>
+            <div class="inline" style="margin-top:8px;align-items:flex-end">
+              <div class="field" style="margin:0"><label for="ml-comp">Missionaries</label><select id="ml-comp"></select></div>
+              <div class="field" style="margin:0"><label for="ml-date">Day</label><input id="ml-date" type="date"></div>
+              <div class="field" style="margin:0"><label for="ml-name">Name</label><input id="ml-name" type="text" maxlength="80"></div>
+              <div class="field" style="margin:0"><label for="ml-gender">Brother / sister</label><select id="ml-gender"><option value="M">Brother</option><option value="F">Sister</option></select></div>
+              <div class="field" style="margin:0"><label for="ml-phone">Mobile</label><input id="ml-phone" type="tel" maxlength="40"></div>
+              <div class="field" style="margin:0"><label for="ml-companion">Sister along <span class="opt">(brother + sisters)</span></label><input id="ml-companion" type="text" maxlength="80"></div>
+              <div class="field" style="margin:0"><button class="btn small" id="ml-book" type="button">Book</button></div>
+              <span class="muted small" id="ml-book-msg"></span>
+            </div>
+          </details>
+          <div id="meals" style="margin-top:12px"><p class="muted">Loading…</p></div>
+        </div>
+      </section>
+
+      <section class="pane" id="pane-sync">
+        <div class="card">
+          <h3 style="margin-top:0">How the LCR sync works</h3>
+          <p>Attendance taken on this site is pushed into LCR's <em>Class and Quorum Attendance</em> report by a script that runs inside your logged-in LCR tab (it clicks the same buttons you would). The roster is refreshed from that page at the same time.</p>
+          <ol>
+            <li>Open <a href="https://lcr.churchofjesuschrist.org/mlt/report/class-and-quorum-attendance?lang=eng" target="_blank" rel="noopener">Class and Quorum Attendance</a> in LCR and sign in.</li>
+            <li>Run <code>scripts/lcr-sync.js</code> in that tab (Claude does this for you on Sunday nights, or on request: “sync attendance to LCR”).</li>
+            <li>Rows below turn <span class="pill ok">synced</span> once LCR has them.</li>
+          </ol>
+          <p class="muted">Only weeks LCR still allows editing can be pushed (LCR opens each week through the coming Sunday).</p>
+        </div>
+      </section>
+      <!-- Settings -->
+      <section class="pane" id="pane-settings">
+        <div class="card">
+          <h3 style="margin-top:0">Roll classes</h3>
+          <p class="muted">The classes that show on the home page and get their own roll (Primary, Young Men, Sunday School, whatever your ward runs). Add, rename or remove classes here any time — nothing is hardcoded. Each class gets its own check-in window, in Eastern time; outside the window the button greys out on the home page, and check-ins are refused by the database too.</p>
+          <div id="rc-list" style="margin-top:8px"><p class="muted">Loading…</p></div>
+          <div class="inline" style="margin-top:10px;align-items:flex-end">
+            <div class="field" style="margin:0"><label for="rc-new-key">Add a class <span class="opt">(key, e.g. young_men)</span></label><input id="rc-new-key" type="text" maxlength="40" style="max-width:170px"></div>
+            <div class="field" style="margin:0"><button class="btn small secondary" id="rc-add" type="button">+ Add class</button></div>
+          </div>
+          <div class="inline" style="margin-top:14px">
+            <div class="field" style="margin:0"><label for="w-day">Check-in day</label>
+              <select id="w-day"><option value="0">Sunday</option><option value="1">Monday</option><option value="2">Tuesday</option><option value="3">Wednesday</option><option value="4">Thursday</option><option value="5">Friday</option><option value="6">Saturday</option></select>
+            </div>
+            <label class="inline" style="gap:6px;align-self:flex-end;padding-bottom:10px"><input id="w-enforce" type="checkbox"> Enforce windows (untick to allow check-in any time, e.g. for testing)</label>
+          </div>
+          <div class="inline" style="margin-top:12px"><button class="btn small" id="w-save">Save roll classes</button><span class="muted" id="w-msg"></span></div>
+        </div>
+
+        <div class="card" style="margin-top:16px">
+          <h3 style="margin-top:0">Bishop meeting requests</h3>
+          <p class="muted">Every request from <code>bishop.html</code> is texted to this number the moment it comes in (name, phone, email, temple-recommend, note) — the executive secretary, usually. Leave it blank to stop the texts; the requests still land in the Inbox either way. Needs <code>supabase/bishop.sql</code>.</p>
+          <div class="inline">
+            <div class="field" style="margin:0"><label for="b-phone">Text new requests to</label><input id="b-phone" type="tel" inputmode="tel" placeholder="385-242-5474" style="max-width:200px"></div>
+            <button class="btn small" id="b-save" style="align-self:flex-end">Save</button><span class="muted" id="b-msg"></span>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:16px">
+          <h3 style="margin-top:0">Warning / Magnet messages</h3>
+          <p class="muted">What <em>Send the warning / magnet message</em> on a person's slide sends. <code>{first}</code> = first name, <code>{name}</code> = full name. Texts go out through the ward's SimpleTexting number; emails go through the Google account running the script (set up in <code>scripts/announcements.gs</code>) and can show a different <em>from</em> address once that address is added under Gmail → Settings → Accounts and Import → “Send mail as” in that account. Please read these through as a bishopric before the first send.</p>
+          <div class="inline">
+            <div class="field" style="margin:0;flex:1"><label for="n-from">Email sender name</label><input id="n-from" type="text" placeholder="Your Ward"></div>
+            <div class="field" style="margin:0;flex:1"><label for="n-from-email">From email <span class="opt">(a “Send mail as” address)</span></label><input id="n-from-email" type="email" placeholder="wardclerk@gmail.com"></div>
+            <div class="field" style="margin:0;flex:1"><label for="n-reply">Reply-to email <span class="opt">(optional)</span></label><input id="n-reply" type="email" placeholder="wardclerk@gmail.com"></div>
+          </div>
+          <div class="inline" style="margin-top:6px">
+            <div class="field" style="margin:0"><label for="n-due-warning">Move records this many days after a Warning</label><input id="n-due-warning" type="number" min="1" max="365" placeholder="21" style="max-width:110px"></div>
+            <div class="field" style="margin:0"><label for="n-due-magnet">…after a Magnet</label><input id="n-due-magnet" type="number" min="1" max="365" placeholder="7" style="max-width:110px"></div>
+          </div>
+          <p class="muted" style="margin:6px 0 0">Once that many days have passed since the "Flag sent" date, the person shows a red <b>Ready to move out</b> tag and appears in that filter.</p>
+          <h4 class="tpl-title">Warning</h4>
+          <div class="field"><label for="n-warning-sms">Text message</label><textarea id="n-warning-sms" class="tpl"></textarea></div>
+          <div class="field"><label for="n-warning-subject">Email subject</label><input id="n-warning-subject" type="text"></div>
+          <div class="field"><label for="n-warning-email">Email</label><textarea id="n-warning-email" class="tpl tall"></textarea></div>
+          <h4 class="tpl-title">Magnet</h4>
+          <div class="field"><label for="n-magnet-sms">Text message</label><textarea id="n-magnet-sms" class="tpl"></textarea></div>
+          <div class="field"><label for="n-magnet-subject">Email subject</label><input id="n-magnet-subject" type="text"></div>
+          <div class="field"><label for="n-magnet-email">Email</label><textarea id="n-magnet-email" class="tpl tall"></textarea></div>
+          <div class="inline" style="margin-top:12px"><button class="btn small" id="n-save">Save messages</button><span class="muted" id="n-msg"></span></div>
+          <details style="margin-top:14px">
+            <summary class="muted">Check texting (SimpleTexting)</summary>
+            <p class="muted" style="margin:8px 0">Sends one short text through the Google script so you can confirm the SimpleTexting token works, without messaging a member.</p>
+            <div class="inline">
+              <div class="field" style="margin:0;flex:1"><label for="t-phone">Your cell</label><input id="t-phone" type="tel" placeholder="(770) 555-1234" autocomplete="tel"></div>
+              <button class="btn small secondary" id="t-send" style="align-self:flex-end">Send me a test text</button>
+            </div>
+            <p class="muted" id="t-msg" style="margin:6px 0 0"></p>
+          </details>
+          <details style="margin-top:10px">
+            <summary class="muted">Text list sync (new member form → SimpleTexting)</summary>
+            <p class="muted" style="margin:8px 0">Whoever ticks <b>agree</b> on the new member form’s “Automated Messages” question (and gives a phone number) is added to the SimpleTexting list, with the form date kept on their contact as the consent record. It runs after each sheet sync (every 6 hours), never re-adds anyone who replied STOP, and never removes anyone.</p>
+            <div class="inline"><button class="btn small secondary" id="tl-sync">Sync now</button><span class="muted" id="tl-msg"></span></div>
+            <p class="muted small" id="tl-last" style="margin:8px 0 0"></p>
+          </details>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Meeting deck: one person per screen -->
+  <div class="deck" id="deck" hidden>
+    <div class="deck-bar">
+      <span class="deck-pos" id="deck-pos"></span>
+      <span class="deck-filter muted" id="deck-filter"></span>
+      <select class="deck-jump" id="deck-jump" aria-label="Jump to a person"></select>
+      <button class="chip" id="deck-full" title="Fullscreen">⤢</button>
+      <button class="chip" id="deck-close">Close ✕</button>
+    </div>
+    <div class="deck-slide" id="deck-slide"></div>
+    <div class="deck-nav">
+      <button class="btn secondary" id="deck-prev">‹ Previous</button>
+      <button class="btn" id="deck-next">Next ›</button>
+    </div>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="app.js?v=4"></script>
+  <script src="callings.js?v=23"></script>
+  <script src="posts.js?v=13"></script>
+  <script src="pipeline.js?v=6"></script>
+  <script src="overview.js?v=2"></script>
+  <script>
+    (function () {
+      const { C, rpc, el, toast, fmtDate } = NP;
+      const $ = id => document.getElementById(id);
+      // `pass` holds a 12-hour session token from admin_login (or, for older DBs, the passphrase).
+      let pass = localStorage.getItem('np_admin_token') || sessionStorage.getItem('np_admin_pass') || '';
+      let members = [], dates = [], current = null, att = [], guests = [], notes = [];
+      // Roll classes are ward-configured (Leaders › Settings › Roll classes) rather than hardcoded —
+      // they can change any time, so this list is loaded fresh each time the app opens.
+      let classes = [];
+      const classInfo = c => classes.find(x => x.key === c);
+      function classLabel(c) { const info = classInfo(c); return info ? (info.short || info.label) : c; }
+
+      // ---- auth ----
+      async function openApp() {
+        $('login').hidden = true; $('app').hidden = false;
+        classes = await NP.loadClasses();
+        dates = await rpc('admin_meeting_dates', { p_pass: pass });
+        await loadMembers(); await buildDates(); await loadAttendance(); loadNotesCount();
+        const want = location.hash.replace('#', '');
+        if (want && document.querySelector(`.tab[data-pane=${want}]`)) document.querySelector(`.tab[data-pane=${want}]`).click();
+        else NPOverview.load();
+      }
+      NPCallings.init({ getPass: () => pass, getMembers: () => members });
+      NPPipeline.init({ getPass: () => pass, getMembers: () => members });
+      document.querySelector('.tab[data-pane=callings]').addEventListener('click', () => NPCallings.load());
+      NPOverview.init({ getPass: () => pass, getMembers: () => members, openCallings: name => { document.querySelector('.tab[data-pane=callings]').click(); NPCallings.load().then(() => NPCallings.openPerson(name)); }, openMember: id => openMemberCalling(id) });
+      document.querySelector('.tab[data-pane=overview]').addEventListener('click', () => NPOverview.load());
+      $('ov-refresh').addEventListener('click', () => NPOverview.refresh());
+      async function loginWithPassphrase(p) {
+        $('login-msg').textContent = 'Checking…';
+        try {
+          const r = await rpc('admin_login', { p_pass: p, p_label: navigator.userAgent.slice(0, 60) });
+          if (!r || !r.ok) { $('login-msg').textContent = (r && r.error) || 'Wrong passphrase.'; return; }
+          pass = r.token; localStorage.setItem('np_admin_token', pass); sessionStorage.removeItem('np_admin_pass');
+          $('pass').value = ''; $('login-msg').textContent = '';
+          await openApp();
+        } catch (e) {
+          // older database without admin_login: fall back to using the passphrase directly
+          if (/admin_login/.test(e.message)) {
+            try { await rpc('admin_meeting_dates', { p_pass: p }); pass = p; sessionStorage.setItem('np_admin_pass', p); await openApp(); return; } catch (e2) { e = e2; }
+          }
+          $('login-msg').textContent = e.status === 401 || /authoriz/i.test(e.message) ? 'Wrong passphrase.' : 'Error: ' + e.message;
+        }
+      }
+      async function resumeSession() {
+        try { await openApp(); }
+        catch (e) { localStorage.removeItem('np_admin_token'); sessionStorage.removeItem('np_admin_pass'); pass = ''; $('login').hidden = false; $('app').hidden = true; if (!/authoriz/i.test(e.message)) $('login-msg').textContent = 'Error: ' + e.message; }
+      }
+      $('login-btn').addEventListener('click', () => loginWithPassphrase($('pass').value));
+      $('pass').addEventListener('keydown', e => { if (e.key === 'Enter') loginWithPassphrase($('pass').value); });
+      $('logout').addEventListener('click', async () => { try { await rpc('admin_logout', { p_token: pass }); } catch (e) {} localStorage.removeItem('np_admin_token'); sessionStorage.removeItem('np_admin_pass'); location.reload(); });
+      if (pass) resumeSession(); else $('login').hidden = false;
+
+      // ---- tabs ----
+      document.querySelectorAll('.tab[data-pane]').forEach(t => t.addEventListener('click', () => {
+        document.querySelectorAll('.tab[data-pane]').forEach(x => x.classList.toggle('on', x === t));
+        document.querySelectorAll('.pane').forEach(p => p.classList.toggle('on', p.id === 'pane-' + t.dataset.pane));
+      }));
+
+      // ---- attendance ----
+      async function buildDates() {
+        const sel = $('date'); sel.innerHTML = '';
+        const today = NP.currentMeetingDate();
+        const all = [today, ...dates.map(d => d.meeting_date)].filter((d, i, a) => a.indexOf(d) === i).sort().reverse();
+        for (const d of all) {
+          const row = dates.find(x => x.meeting_date === d);
+          const counts = row && row.counts || {};
+          const extra = row ? ` (${classes.map(c => counts[c.key] || 0).join(' / ')})` : '';
+          sel.appendChild(el('option', { value: d }, fmtDate(d, { weekday: 'short', year: 'numeric' }) + extra));
+        }
+        current = sel.value;
+        sel.onchange = () => { current = sel.value; loadAttendance(); };
+      }
+
+      async function loadAttendance() {
+        [att, guests] = await Promise.all([rpc('admin_attendance', { p_pass: pass, p_date: current }), rpc('admin_guests', { p_pass: pass, p_date: current }).catch(() => [])]);
+        const box = $('att'); box.innerHTML = '';
+        const stats = $('stats'); stats.innerHTML = '';
+        for (const info of classes) {
+          const c = info.key;
+          const rows = att.filter(a => a.class === c);
+          const grows = guests.filter(g => g.class === c);
+          stats.appendChild(el('div', { class: 'stat' }, [el('b', {}, String(rows.length + grows.length)), el('span', {}, classLabel(c) + (grows.length ? ` (${grows.length} guest${grows.length === 1 ? '' : 's'})` : ''))]));
+          for (const org of (info.orgs || [])) {
+            stats.appendChild(el('div', { class: 'stat' }, [el('b', {}, String(rows.filter(r => r.org === org.key).length)), el('span', {}, org.label)]));
+          }
+          const synced = rows.filter(r => r.synced_to_lcr_at).length;
+          box.appendChild(el('div', { class: 'section-title' }, [el('h2', {}, classLabel(c)), el('span', { class: 'meta' }, rows.length ? `${synced}/${rows.length} in LCR` : '')]));
+          if (!rows.length && !grows.length) { box.appendChild(el('p', { class: 'empty' }, 'Nobody checked in.')); continue; }
+          const t = el('table', { class: 'grid' }, el('thead', {}, el('tr', {}, [el('th', {}, 'Name'), el('th', {}, 'Org'), el('th', {}, 'Checked in'), el('th', {}, 'LCR'), el('th', {}, '')])));
+          const tb = el('tbody');
+          for (const r of rows) {
+            tb.appendChild(el('tr', {}, [
+              el('td', {}, r.display_name),
+              el('td', {}, r.org || ''),
+              el('td', { class: 'muted' }, new Date(r.created_at).toLocaleTimeString('en-US', { timeZone: C.timeZone, hour: 'numeric', minute: '2-digit' })),
+              el('td', {}, el('span', { class: 'pill ' + (r.synced_to_lcr_at ? 'ok' : 'off') }, r.synced_to_lcr_at ? 'synced' : 'pending')),
+              el('td', {}, el('button', { class: 'chip', onclick: async () => { if (!confirm(`Remove ${r.display_name} from ${classLabel(c)}?`)) return; await rpc('admin_set_attendance', { p_pass: pass, p_date: current, p_class: c, p_member_id: r.member_id, p_present: false }); loadAttendance(); } }, 'Remove')),
+            ]));
+          }
+          for (const g of grows) {
+            tb.appendChild(el('tr', {}, [
+              el('td', {}, [g.name + ' ', el('span', { class: 'pill' }, 'guest')]),
+              el('td', {}, '—'),
+              el('td', { class: 'muted' }, new Date(g.created_at).toLocaleTimeString('en-US', { timeZone: C.timeZone, hour: 'numeric', minute: '2-digit' })),
+              el('td', {}, el('span', { class: 'pill off', title: 'Guests are counted here only; LCR visitor totals are not sent' }, 'not sent to LCR')),
+              el('td', {}, el('button', { class: 'chip', onclick: async () => { if (!confirm(`Remove guest ${g.name}?`)) return; await rpc('admin_remove_guest', { p_pass: pass, p_guest_id: g.guest_id }); loadAttendance(); } }, 'Remove')),
+            ]));
+          }
+          t.appendChild(tb); box.appendChild(t);
+        }
+        // add-member select
+        const sel = $('add-member'); sel.innerHTML = '';
+        for (const m of members.filter(m => m.active)) sel.appendChild(el('option', { value: m.id }, m.name));
+        const csel = $('add-class'); csel.innerHTML = '';
+        for (const c of classes) csel.appendChild(el('option', { value: c.key }, c.label));
+      }
+      $('refresh').addEventListener('click', async () => { dates = await rpc('admin_meeting_dates', { p_pass: pass }); await buildDates(); await loadAttendance(); });
+      $('add-btn').addEventListener('click', async () => {
+        await rpc('admin_set_attendance', { p_pass: pass, p_date: current, p_class: $('add-class').value, p_member_id: $('add-member').value, p_present: true });
+        toast('Added'); loadAttendance();
+      });
+      $('copy').addEventListener('click', async () => {
+        const lines = [`${C.wardName || 'Ward'} — attendance for ${fmtDate(current, { year: 'numeric' })}`];
+        for (const info of classes) {
+          const c = info.key;
+          const rows = att.filter(a => a.class === c);
+          lines.push('', `${classLabel(c)} (${rows.length})`);
+          if ((info.orgs || []).length) {
+            for (const o of info.orgs) { const rr = rows.filter(r => r.org === o.key); lines.push(`  ${o.label} (${rr.length}): ${rr.map(r => r.name).join('; ')}`); }
+          } else lines.push('  ' + rows.map(r => r.name).join('; '));
+          const gg = guests.filter(g => g.class === c);
+          if (gg.length) lines.push(`  Guests / visitors (${gg.length}): ${gg.map(g => g.name).join('; ')}`);
+        }
+        try { await navigator.clipboard.writeText(lines.join('\n')); toast('Summary copied'); } catch (e) { prompt('Copy:', lines.join('\n')); }
+      });
+
+      // ---- Service: missionary meals (supabase/meals.sql) — companionships are ward-configured and can
+      // change any time an assignment does (elders, a sisters' companionship, more than one at once).
+      const fmtDay = iso => { const [y, m, d] = String(iso).slice(0, 10).split('-').map(Number); return new Date(Date.UTC(y, m - 1, d)).toLocaleDateString('en-US', { timeZone: 'UTC', weekday: 'short', month: 'short', day: 'numeric' }); };
+      let svSettings = {}, mlRows = [], mlShowPast = false, comps = [];
+      // comps: [{key, label, gender, area, phone, on}], derived from svSettings each load
+      function readComps() {
+        let keys = []; try { keys = JSON.parse(svSettings.meals_companionships || '[]'); } catch (e) { keys = []; }
+        return keys.map(k => ({ key: k, label: svSettings['meals_' + k + '_label'] || k, gender: svSettings['meals_' + k + '_gender'] === 'M' ? 'M' : 'F', area: svSettings['meals_' + k + '_area'] || '', phone: svSettings['meals_' + k + '_phone'] || '', on: (svSettings['meals_' + k + '_on'] || 'true') === 'true' }));
+      }
+      async function loadService() {
+        try { svSettings = Object.fromEntries((await rpc('admin_get_settings', { p_pass: pass })).map(r => [r.key, r.value])); } catch (e) { svSettings = {}; }
+        // meals settings
+        const on = (svSettings.meals_enabled || 'true') === 'true';
+        $('ml-enabled').checked = on; $('ml-enabled-label').textContent = on ? 'Sign-ups are on' : 'Sign-ups are off';
+        $('ml-days').value = svSettings.meals_days_ahead || '42';
+        comps = readComps();
+        renderCompSettings();
+        await loadMeals();
+      }
+      function renderCompSettings() {
+        const ms = $('ml-settings'); ms.innerHTML = '';
+        if (!comps.length) ms.appendChild(el('p', { class: 'muted small' }, 'No companionships set up yet — add one below.'));
+        for (const c of comps) {
+          const k = c.key;
+          ms.appendChild(el('div', { class: 'inline ml-row', style: 'align-items:flex-end;margin-bottom:6px' }, [
+            el('label', { class: 'ml-on' }, [el('input', { type: 'checkbox', id: 'ml-on-' + k, checked: c.on ? '' : null }), ' on']),
+            el('div', { class: 'field', style: 'margin:0' }, [el('label', { for: 'ml-label-' + k }, 'Name'), el('input', { id: 'ml-label-' + k, type: 'text', maxlength: 40, value: c.label, style: 'max-width:150px' })]),
+            el('div', { class: 'field', style: 'margin:0' }, [el('label', { for: 'ml-gender-' + k }, 'Elders / Sisters'), el('select', { id: 'ml-gender-' + k }, [el('option', { value: 'F', selected: c.gender === 'F' ? '' : null }, 'Sisters'), el('option', { value: 'M', selected: c.gender === 'M' ? '' : null }, 'Elders')])]),
+            el('div', { class: 'field', style: 'margin:0;flex:1' }, [el('label', { for: 'ml-area-' + k }, 'Their area — meals happen here'), el('input', { id: 'ml-area-' + k, type: 'text', maxlength: 120, value: c.area, placeholder: 'e.g. north side of the boundary' })]),
+            el('div', { class: 'field', style: 'margin:0' }, [el('label', { for: 'ml-phone-' + k }, 'Their number'), el('input', { id: 'ml-phone-' + k, type: 'tel', maxlength: 40, value: c.phone, style: 'max-width:150px' })]),
+            el('button', { class: 'chip danger tiny', type: 'button', title: 'Remove this companionship', onclick: async () => { if (!confirm('Remove “' + c.label + '” from meal sign-ups?')) return; try { await rpc('admin_set_meal_companionship', { p_pass: pass, p_key: k, p_remove: true }); toast('Removed'); await loadService(); } catch (e) { toast('Failed: ' + e.message, 4000); } } }, '×'),
+          ]));
+        }
+        const sel = $('ml-comp'); sel.innerHTML = ''; comps.forEach(c => sel.appendChild(el('option', { value: c.key }, c.label)));
+      }
+      $('ml-add-comp').addEventListener('click', async () => {
+        const raw = $('ml-new-key').value.trim().toLowerCase().replace(/[^a-z0-9_]/g, '_');
+        if (!raw) { toast('Type a key first (e.g. elders)'); return; }
+        if (comps.some(c => c.key === raw)) { toast('That key is already in use'); return; }
+        try { await rpc('admin_set_meal_companionship', { p_pass: pass, p_key: raw, p_label: raw.replace(/_/g, ' ').replace(/\b\w/g, ch => ch.toUpperCase()) }); $('ml-new-key').value = ''; toast('Added — fill in the details and Save'); await loadService(); }
+        catch (e) { toast('Not added: ' + e.message, 4000); }
+      });
+      async function loadMeals() {
+        const box = $('meals');
+        try { mlRows = await rpc('admin_meals', { p_pass: pass, p_include_past: mlShowPast }); }
+        catch (e) { box.innerHTML = ''; box.appendChild(el('p', { class: 'notice' }, /admin_meals/.test(e.message) ? 'Run supabase/meals.sql in Supabase first.' : 'Could not load: ' + e.message)); return; }
+        renderMeals();
+      }
+      function renderMeals() {
+        const box = $('meals'); box.innerHTML = '';
+        const label = k => svSettings['meals_' + k + '_label'] || (comps.find(c => c.key === k) || {}).label || k;
+        const open = mlRows.filter(m => m.status === 'booked'), rest = mlRows.filter(m => m.status !== 'booked');
+        if (!mlRows.length) box.appendChild(el('p', { class: 'muted' }, 'No meals booked yet.'));
+        const st = (m, to) => async () => { try { await rpc('admin_meal_status', { p_pass: pass, p_id: m.id, p_status: to }); await loadMeals(); } catch (e) { toast('Failed: ' + e.message, 4000); } };
+        const row = m => el('div', { class: 'dn-card ' + (m.status === 'booked' ? '' : 'done') }, [
+          el('div', { class: 'dn-name' }, [fmtDay(m.meal_date) + ' · ' + label(m.companionship), el('span', { class: 'pill ' + (m.status === 'booked' ? 'ok' : 'off') }, m.status)]),
+          el('div', { class: 'dn-meta' }, [el('b', {}, m.name), ' (' + (m.gender === 'M' ? 'brother' : 'sister') + ') · ', el('a', { href: 'tel:' + String(m.phone).replace(/\D/g, '') }, m.phone), m.companion ? ' · with ' + m.companion : '', m.notes ? ' · “' + m.notes + '”' : '']),
+          el('div', { class: 'dn-actions' }, [
+            m.status === 'booked' ? el('button', { class: 'chip ok', type: 'button', onclick: st(m, 'done') }, 'Done') : el('button', { class: 'chip', type: 'button', onclick: st(m, 'booked') }, 'Back to booked'),
+            m.status === 'booked' ? el('button', { class: 'chip', type: 'button', onclick: () => { if (confirm('Cancel this meal? The day opens up again.')) st(m, 'cancelled')(); } }, 'Cancel') : null,
+            el('button', { class: 'chip danger', type: 'button', onclick: async () => { if (!confirm('Delete this booking for good?')) return; try { await rpc('admin_meal_delete', { p_pass: pass, p_id: m.id }); await loadMeals(); } catch (e) { toast('Failed: ' + e.message, 4000); } } }, 'Delete'),
+          ]),
+        ]);
+        open.forEach(m => box.appendChild(row(m)));
+        if (rest.length) { box.appendChild(el('h4', { class: 'post-month' }, 'Done / cancelled')); rest.forEach(m => box.appendChild(row(m))); }
+        box.appendChild(el('p', { class: 'muted small' }, el('button', { class: 'chip tiny', type: 'button', onclick: () => { mlShowPast = !mlShowPast; loadMeals(); } }, mlShowPast ? 'Hide older' : 'Show older meals')));
+      }
+      $('ml-enabled').addEventListener('change', async () => {
+        const on = $('ml-enabled').checked;
+        try { await rpc('admin_set_setting', { p_pass: pass, p_key: 'meals_enabled', p_value: on ? 'true' : 'false' }); svSettings.meals_enabled = on ? 'true' : 'false'; $('ml-enabled-label').textContent = on ? 'Sign-ups are on' : 'Sign-ups are off'; toast(on ? 'Meal sign-ups are on' : 'Meal sign-ups are off — meals.html says so'); }
+        catch (e) { $('ml-enabled').checked = !on; toast('Not saved: ' + e.message, 4000); }
+      });
+      $('ml-save').addEventListener('click', async () => {
+        const msg = $('ml-save-msg'); msg.textContent = 'Saving…';
+        try {
+          const days = parseInt($('ml-days').value, 10); if (isNaN(days) || days < 7 || days > 120) throw new Error('days ahead: 7–120');
+          await rpc('admin_set_setting', { p_pass: pass, p_key: 'meals_days_ahead', p_value: String(days) });
+          for (const c of comps) {
+            const k = c.key;
+            await rpc('admin_set_meal_companionship', {
+              p_pass: pass, p_key: k,
+              p_label: $('ml-label-' + k).value.trim() || k,
+              p_gender: $('ml-gender-' + k).value === 'M' ? 'M' : 'F',
+              p_area: $('ml-area-' + k).value.trim(),
+              p_phone: $('ml-phone-' + k).value.trim(),
+              p_on: $('ml-on-' + k).checked,
+            });
+          }
+          msg.textContent = 'Saved.'; await loadService();
+        } catch (e) { msg.textContent = 'Not saved: ' + e.message; }
+      });
+      $('ml-book').addEventListener('click', async () => {
+        const msg = $('ml-book-msg'); msg.textContent = 'Booking…'; $('ml-book').disabled = true;
+        try {
+          const r = await rpc('meals_signup', { p_companionship: $('ml-comp').value, p_date: $('ml-date').value || null, p_name: $('ml-name').value.trim(), p_gender: $('ml-gender').value, p_phone: $('ml-phone').value.trim(), p_companion: $('ml-companion').value.trim() || null, p_notes: null, p_website: '' });
+          msg.textContent = 'Booked' + (r && r.phone ? ' — give them ' + r.phone : '') + '.'; ['ml-name', 'ml-phone', 'ml-companion', 'ml-date'].forEach(id => { $(id).value = ''; });
+          await loadMeals();
+        } catch (e) { msg.textContent = e.message; }
+        finally { $('ml-book').disabled = false; }
+      });
+      document.querySelector('.tab[data-pane=service]').addEventListener('click', loadService);
+
+      // ---- members ----
+      async function loadMembers() {
+        members = await rpc('admin_members', { p_pass: pass });
+        renderMembers();
+      }
+      // The Flag column needs the callings data (sheet copy + site edits); it fills in once that has loaded.
+      let flagsReady = false, flagsLoading = false;
+      function renderMembers() {
+        const q = $('members-search').value.trim().toLowerCase();
+        const box = $('members'); box.innerHTML = '';
+        const active = members.filter(m => m.active).length;
+        // the process chips (only once the callings data is in — the counts need it)
+        const chips = $('members-chips'); chips.innerHTML = '';
+        const stageOf = new Map(flagsReady ? members.map(m => { try { return [m.id, NPPipeline.stageFor(m)]; } catch (e) { console.error(e); return [m.id, null]; } }) : []);
+        const group = NPPipeline.GROUPS.find(g => g[0] === memberFilter) || NPPipeline.GROUPS[0];
+        if (flagsReady) for (const [key, label, test] of NPPipeline.GROUPS) {
+          const n = members.filter(m => test(m, stageOf.get(m.id))).length;
+          if (!n && key !== 'all') continue;   // an empty stage isn't worth a chip
+          chips.appendChild(el('button', { class: 'chip' + (memberFilter === key ? ' on' : ''), type: 'button', onclick: () => { memberFilter = key; renderMembers(); } }, key === 'all' ? label : `${label} · ${n}`));
+        }
+        const shown = members.filter(m => (!q || m.name.toLowerCase().includes(q)) && (!flagsReady || group[2](m, stageOf.get(m.id))));
+        $('members-count').textContent = `${active} active · ${members.length - active} inactive` + (memberFilter !== 'all' || q ? ` · showing ${shown.length}` : '');
+        // copy what's showing as "name — calling — who contacts", one per line (everyone with something in progress)
+        const lines = flagsReady ? NPPipeline.copyLines(shown, stageOf) : [];
+        if (lines.length) chips.appendChild(el('button', { class: 'chip copy-list', type: 'button', title: 'Copy these as one line per person: name — calling — who contacts', onclick: async e => {
+          const text = lines.join('\n');
+          try { await navigator.clipboard.writeText(text); toast(`Copied ${lines.length} line${lines.length === 1 ? '' : 's'}`); }
+          catch (err) { window.prompt('Copy this list', text); }
+        } }, `Copy list · ${lines.length}`));
+        // active / inactive comes from the weekly LCR sync (the roster refresh deactivates anyone LCR no longer lists) — no hand switch here
+        // "LCR class" here is whichever roll class has orgTypeIds set (Leaders › Settings › Roll classes) — if none do, the column is blank
+        const lcrClass = classes.find(c => (c.orgTypeIds || []).length);
+        const t = el('table', { class: 'grid members-grid' }, el('thead', {}, el('tr', {}, [el('th', {}, 'Name'), el('th', {}, 'Org'), el('th', {}, lcrClass ? lcrClass.label : 'LCR class'), el('th', {}, 'Status'), el('th', {}, 'Calling in progress'), el('th', {}, 'Flag')])));
+        const tb = el('tbody');
+        for (const m of shown) {
+          const ss = lcrClass ? (m.lcr_classes || []).find(c => lcrClass.orgTypeIds.includes(c.orgTypeId)) : null;
+          const tr = el('tr', { 'data-member': m.id }, [
+            el('td', {}, m.name),
+            el('td', {}, m.org || ''),
+            el('td', { class: 'muted' }, ss ? ss.orgName : '—'),
+            el('td', {}, el('span', { class: 'pill ' + (m.active ? 'ok' : 'off') }, m.active ? 'active' : 'inactive')),
+            el('td', { class: 'pipe-td' }, safeCell(() => pipelineCell(m))),
+            el('td', { class: 'flag-cell' }, safeCell(() => flagCell(m))),
+          ]);
+          tb.appendChild(tr);
+        }
+        t.appendChild(tb); box.appendChild(t);
+        if (!shown.length) box.appendChild(el('p', { class: 'empty' }, 'Nobody matches.'));
+        if (flagsError) chips.appendChild(el('span', { class: 'notice', style: 'margin:0' }, 'The callings data didn’t load, so the Calling and Flag columns are blank: ' + flagsError));
+        if (!flagsReady && !flagsLoading && !flagsError) { flagsLoading = true; Promise.all([NPCallings.load(), NPPipeline.load()]).then(() => { flagsReady = true; renderMembers(); }).catch(e => { flagsError = String(e && e.message || e); renderMembers(); }).finally(() => { flagsLoading = false; }); }
+      }
+      // one person's cell failing (odd data) must not take the whole list down with it
+      let flagsError = '';
+      function safeCell(make) { try { return make(); } catch (e) { console.error(e); return el('span', { class: 'pill warn', title: String(e && e.message || e) }, '!'); } }
+      let memberFilter = 'all';
+      // Calling in progress: the open pipeline row (or what the callings sheet says); tap to edit in a
+      // small window over the list (the table is too wide on a phone for an inline editor).
+      function pipelineCell(m) {
+        if (!flagsReady) return el('span', { class: 'muted small' }, '…');
+        return NPPipeline.cell(m, (row, pre) => openPipeEditor(m, row, pre));
+      }
+      function openPipeEditor(m, row, pre) {
+        document.querySelectorAll('.pipe-modal').forEach(x => x.remove());
+        const close = changed => { modal.remove(); document.removeEventListener('keydown', onKey); if (changed) { renderMembers(); NPOverview.refresh(); } };
+        const onKey = e => { if (e.key === 'Escape') close(false); };
+        const modal = el('div', { class: 'pipe-modal', onclick: e => { if (e.target === modal) close(false); } }, el('div', { class: 'pipe-card' }, [
+          el('h3', {}, [m.display_name || m.name, el('span', { class: 'muted' }, row ? ' · ' + row.calling : ' · calling')]),
+          NPPipeline.editor(m, row, pre, close),
+        ]));
+        document.body.appendChild(modal); document.addEventListener('keydown', onKey);
+      }
+      // Leaders › Overview → this member's editor
+      function openMemberCalling(memberId) {
+        const m = members.find(x => x.id === memberId); if (!m) { toast('Not on the members list'); return; }
+        document.querySelector('.tab[data-pane=members]').click();
+        $('members-search').value = m.name; memberFilter = 'all'; renderMembers(); openPipeEditor(m, NPPipeline.openFor(m), null);
+      }
+      // Warning / Magnet straight from the list: the same Flag column the Callings slide edits
+      // (someone not on the callings list gets a row there; "Send" opens their slide for the message).
+      function flagCell(m) {
+        if (!flagsReady) return el('span', { class: 'muted small' }, '…');
+        const p = NPCallings.personFor(m), flag = p && !p.deleted ? p.flag : '';
+        const sel = el('select', { class: 'flag-select', title: 'Warning = may be sent back if they don’t attend · Magnet = being sent back' }, [el('option', { value: '' }, 'No flag'), el('option', { value: 'Warning' }, 'Warning'), el('option', { value: 'Magnet' }, 'Magnet')]);
+        sel.value = flag;
+        sel.className += flag ? ' ' + flag.toLowerCase() : '';
+        sel.addEventListener('change', async () => {
+          const to = sel.value;
+          if (to && !(await (async () => { const ok = confirm((to === 'Warning' ? 'Flag ' + m.name + ' as Warning (may be sent back to their home ward if they don’t attend)?' : 'Flag ' + m.name + ' as Magnet (being sent back, no new-member meeting)?') + (p && !p.deleted ? '' : '\n\nThey aren’t on the callings list yet — this adds a row for them.')); if (ok) await new Promise(r => setTimeout(r, 150)); return ok; })())) { sel.value = flag; return; }
+          sel.disabled = true;
+          try { await NPCallings.setFlag(m, to); toast(to ? m.name + ' flagged ' + to + ' — writing it to the Google Sheet…' : 'Flag cleared for ' + m.name); renderMembers(); }
+          catch (e) { sel.disabled = false; sel.value = flag; toast('Not saved: ' + (/admin_callings_edit/.test(e.message) ? 'run supabase/edits.sql + flags.sql first' : e.message), 5000); }
+        });
+        const bits = [sel];
+        if (flag) bits.push(el('button', { class: 'chip', type: 'button', title: p.flagSent ? 'Message sent ' + p.flagSent + ' — open their slide' : 'Open their slide in Callings to send the ' + flag.toLowerCase() + ' message', onclick: () => { document.querySelector('.tab[data-pane=callings]').click(); NPCallings.load().then(() => NPCallings.openPerson(p.sheetName)); } }, p.flagSent ? 'Sent ' + p.flagSent.replace(/\s*\(.*$/, '') : 'Send message'));
+        return el('div', { class: 'inline', style: 'gap:6px' }, bits);
+      }
+      $('members-search').addEventListener('input', renderMembers);
+      // callings move along from the Overview too — redraw the list each time the tab opens
+      document.querySelector('.tab[data-pane=members]').addEventListener('click', () => { if (flagsReady) renderMembers(); });
+
+      // ---- inbox: meeting requests for the Bishop ----
+      let meetings = [];
+      async function loadNotesCount() {
+        try { const n = await rpc('admin_notes_count', { p_pass: pass }); $('notes-badge').textContent = n; $('notes-badge').hidden = !n; } catch (e) {}
+        try { const n = await rpc('admin_posts_pending_count', { p_pass: pass }); $('posts-badge').textContent = n; $('posts-badge').hidden = !n; } catch (e) {}
+      }
+      async function loadNotes() {
+        const box = $('notes'); box.innerHTML = '';
+        const incl = $('notes-handled').checked;
+        try { meetings = await rpc('admin_meeting_requests', { p_pass: pass, p_include_handled: incl }); }
+        catch (e) { box.appendChild(el('p', { class: 'notice' }, 'Run supabase/inbox.sql first (' + e.message + ').')); return; }
+        const fmtWhen = iso => new Date(iso).toLocaleString('en-US', { timeZone: C.timeZone, month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+
+        box.appendChild(el('h3', { class: 'inbox-title' }, 'Meeting requests for the Bishop'));
+        if (!meetings.length) box.appendChild(el('p', { class: 'empty' }, incl ? 'No requests yet.' : 'No open requests.'));
+        for (const m of meetings) {
+          box.appendChild(el('div', { class: 'note' + (m.handled_at ? ' handled' : '') }, [
+            el('div', { class: 'head' }, [
+              el('span', { class: 'pill ' + (m.temple_recommend ? 'recommend' : '') }, m.temple_recommend ? 'Temple recommend interview' : 'Meeting with the Bishop'),
+              el('span', { class: 'muted', style: 'margin-left:auto;font-size:12px' }, fmtWhen(m.created_at)),
+            ]),
+            el('div', { class: 'msg' }, [el('b', {}, m.name), ' · ', el('a', { href: 'tel:' + m.phone.replace(/\D/g, '') }, m.phone), ' · ', el('a', { href: 'mailto:' + m.email }, m.email)]),
+            m.note ? el('div', { class: 'who' }, '“' + m.note + '”') : null,
+            m.handled_at ? el('div', { class: 'who' }, 'Handled' + (m.handled_by ? ' by ' + m.handled_by : '')) : null,
+            el('div', { class: 'actions' }, [
+              el('button', { class: 'chip', onclick: async () => { await rpc('admin_meeting_handled', { p_pass: pass, p_id: m.id, p_handled: !m.handled_at, p_by: null }); loadNotes(); } }, m.handled_at ? 'Mark as open' : 'Mark scheduled'),
+              el('button', { class: 'chip', onclick: async () => { if (!confirm(`Delete the request from ${m.name}?`)) return; await rpc('admin_meeting_delete', { p_pass: pass, p_id: m.id }); loadNotes(); } }, 'Delete'),
+            ]),
+          ]));
+        }
+        loadNotesCount();
+      }
+      $('notes-handled').addEventListener('change', loadNotes);
+      document.querySelector('.tab[data-pane=notes]').addEventListener('click', loadNotes);
+
+      // ---- announcements editor ----
+      let ann = null;  // current row from the database (or null)
+      function renderAnnFiles() {
+        const box = $('ann-files'); box.innerHTML = '';
+        const all = [...(ann && ann.images || []).map(x => ({ ...x, _t: 'images' })), ...(ann && ann.files || []).map(x => ({ ...x, _t: 'files' }))];
+        if (!all.length) { box.appendChild(el('span', { class: 'muted' }, 'None attached.')); return; }
+        for (const f of all) box.appendChild(el('span', { class: 'chip' }, [
+          el('a', { href: f.path, target: '_blank', rel: 'noopener' }, f.name || f.path.split('/').pop()),
+          el('button', { class: 'x', title: 'Remove from the site', style: 'border:0;background:none;cursor:pointer', onclick: () => { ann[f._t] = ann[f._t].filter(x => x.path !== f.path); renderAnnFiles(); } }, '×'),
+        ]));
+      }
+      async function loadAnnouncements() {
+        $('ann-msg').textContent = '';
+        try {
+          const rows = await rpc('current_announcements');
+          ann = rows && rows[0] ? { id: rows[0].id, text: rows[0].text || '', images: rows[0].images || [], files: rows[0].files || [], sent_at: rows[0].sent_at, updated_at: rows[0].updated_at } : null;
+        } catch (e) { $('ann-msg').textContent = 'Run supabase/inbox.sql first (' + e.message + ').'; ann = null; }
+        $('ann-text').value = ann ? ann.text : '';
+        $('ann-meta').textContent = ann ? ('Email of ' + (ann.sent_at ? fmtDate(ann.sent_at.slice(0, 10), { weekday: undefined }) : '—') + ' · last edited ' + new Date(ann.updated_at).toLocaleString('en-US', { timeZone: C.timeZone, month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })) : 'Nothing in the database yet';
+        $('ann-load-json').hidden = !!ann;
+        renderAnnFiles();
+      }
+      $('ann-load-json').addEventListener('click', async () => {
+        try {
+          const j = await (await fetch('announcements.json?v=' + Date.now(), { cache: 'no-store' })).json();
+          ann = { id: null, text: j.text || '', images: (j.images || []).map(x => typeof x === 'string' ? { path: x, name: x.split('/').pop() } : x), files: j.files || [], sent_at: j.sent_at, subject: j.subject };
+          $('ann-text').value = ann.text; renderAnnFiles(); $('ann-msg').textContent = 'Loaded from the site — press Save to keep it.';
+        } catch (e) { $('ann-msg').textContent = 'Could not load announcements.json: ' + e.message; }
+      });
+      $('ann-save').addEventListener('click', async () => {
+        const text = $('ann-text').value;
+        try {
+          if (ann && ann.id) {
+            await rpc('admin_update_announcements', { p_pass: pass, p_id: ann.id, p_text: text, p_images: ann.images, p_files: ann.files, p_by: null });
+          } else {
+            await rpc('admin_publish_announcements', { p_pass: pass, p_text: text, p_images: ann ? ann.images : [], p_files: ann ? ann.files : [], p_subject: ann && ann.subject || 'Weekly Announcements', p_sent_at: ann && ann.sent_at || new Date().toISOString(), p_message_id: null, p_source: 'leaders' });
+          }
+          $('ann-msg').textContent = 'Saved — live on the home page now.'; await loadAnnouncements(); $('ann-msg').textContent = 'Saved — live on the home page now.';
+        } catch (e) { $('ann-msg').textContent = 'Not saved: ' + e.message; }
+      });
+      document.querySelector('.tab[data-pane=announcements]').addEventListener('click', () => { loadPosts(); loadAnnouncements(); });
+
+      // ---- posts: the review queue + add / edit (posts.js, supabase/posts.sql) ----
+      let posts = [], postForm = null;
+      const whenShort = iso => new Date(iso).toLocaleString('en-US', { timeZone: C.timeZone, month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+      async function loadPosts() {
+        const box = $('post-queue');
+        try { posts = await rpc('admin_posts', { p_pass: pass }); }
+        catch (e) { box.innerHTML = ''; box.appendChild(el('p', { class: 'notice' }, /admin_posts/.test(e.message) ? 'Run supabase/posts.sql in Supabase to turn on posts.' : 'Could not load posts: ' + e.message)); return; }
+        renderPosts();
+      }
+      function renderPosts() {
+        const box = $('post-queue'); box.innerHTML = '';
+        const today = NPPosts.todayIso();
+        const pending = posts.filter(p => p.status === 'pending');
+        const stillRepeating = p => p.repeat && (!p.repeat_until || p.repeat_until >= today);
+        const live = posts.filter(p => p.status === 'approved' && (!p.event_date || p.event_date >= today || stillRepeating(p)));
+        // an event leaves the home page the day after it happens; here it lingers two weeks, then goes
+        const cutoff = new Date(Date.now() - 14 * 864e5).toISOString().slice(0, 10);
+        const past = posts.filter(p => p.status === 'approved' && p.event_date && !stillRepeating(p) && (p.repeat ? p.repeat_until : p.event_date) < today && (p.repeat ? p.repeat_until : p.event_date) >= cutoff);
+        const rejected = posts.filter(p => p.status === 'rejected');
+        $('posts-badge').textContent = pending.length; $('posts-badge').hidden = !pending.length;
+        const section = (title, list, cls, empty) => {
+          box.appendChild(el('h3', { class: 'post-queue-title' }, [title, el('span', { class: 'pill ' + (cls || 'off') }, String(list.length))]));
+          if (!list.length) { box.appendChild(el('p', { class: 'muted' }, empty)); return; }
+          box.appendChild(el('div', { class: 'post-review' }, list.map(postCard)));
+        };
+        section('Waiting for approval', pending, 'wait', 'Nothing waiting.');
+        section('On the home page', live, 'ok', 'Nothing live — add a post or approve one.');
+        if (past.length) section('Past events', past, 'off', '');
+        if (rejected.length) section('Not approved', rejected, 'off', '');
+      }
+      function postCard(p) {
+        const who = p.source === 'public' ? 'Sent in by ' + (p.submitted_name || 'someone') + (p.submitted_contact ? ' · ' + p.submitted_contact : '') : 'Posted by leaders';
+        const meta = who + ' · ' + whenShort(p.created_at) + (p.reviewed_at && p.status !== 'pending' ? ' · ' + p.status + ' ' + whenShort(p.reviewed_at) : '') + (p.reminded_at ? ' · texted ' + whenShort(p.reminded_at) : '');
+        const b = (label, cls, fn) => el('button', { class: 'chip ' + (cls || ''), type: 'button', onclick: fn }, label);
+        const actions = [
+          p.status !== 'approved' ? b(p.status === 'pending' ? 'Approve' : 'Publish', 'ok', () => setPostStatus(p, 'approved')) : null,
+          p.status === 'approved' && C.sheetsRefreshUrl ? b('Text a reminder', 'remind-btn', e => openReminder(p, e.currentTarget.closest('.post'))) : null,
+          b('Edit', '', () => openPostEditor(p)),
+          p.status === 'approved' ? b('Take down', '', () => setPostStatus(p, 'rejected')) : null,
+          p.status === 'pending' ? b('Reject', 'danger', () => setPostStatus(p, 'rejected')) : null,
+          p.status !== 'pending' ? b('Delete', 'danger', () => deletePost(p)) : null,
+        ];
+        const c = NPPosts.card(p, { footer: el('div', {}, [el('div', { class: 'post-meta' }, meta), p.repeat && p.status !== 'rejected' ? skipRow(p) : null, el('div', { class: 'post-actions' }, actions)]) });
+        c.classList.add(p.status);
+        return c;
+      }
+      // Upcoming dates of a repeating post, each a toggle: tap to cancel that one date (it shows as
+      // cancelled on the site and in the email, and drops out of subscribed calendars), tap again to restore.
+      function skipRow(p) {
+        const occ = NPPosts.occurrences(p, 4);
+        if (!occ.length) return el('p', { class: 'muted small' }, 'No dates left in this series.');
+        return el('div', { class: 'post-skips' }, [el('span', { class: 'muted small' }, 'Upcoming — tap a date to cancel it:'), ...occ.map(o => {
+          const dp = NPPosts.dateParts(o.date);
+          return el('button', { class: 'chip' + (o.cancelled ? ' skipped' : ''), type: 'button', title: o.cancelled ? 'Cancelled — tap to put it back' : 'Cancel this one date', onclick: async e => {
+            e.currentTarget.disabled = true;
+            try { p.skip_dates = await rpc('admin_post_skip', { p_pass: pass, p_id: p.id, p_date: o.date, p_skip: !o.cancelled }) || []; toast(o.cancelled ? dp.mon + ' ' + dp.d + ' is back on' : dp.mon + ' ' + dp.d + ' cancelled'); renderPosts(); if (p.status === 'approved') pingCalendar(); }
+            catch (err) { e.currentTarget.disabled = false; toast('Failed: ' + (/admin_post_skip/.test(err.message) ? 'run supabase/repeat.sql first' : err.message), 4000); }
+          } }, (o.cancelled ? '✕ ' : '') + dp.dow.slice(0, 3) + ' ' + dp.mon + ' ' + dp.d);
+        })]);
+      }
+      async function setPostStatus(p, status) {
+        try { await rpc('admin_post_status', { p_pass: pass, p_id: p.id, p_status: status, p_by: null }); toast(status === 'approved' ? '“' + p.title + '” is on the home page' : status === 'rejected' ? '“' + p.title + '” taken down' : 'Updated'); await loadPosts(); if (p.event_date) pingCalendar(); }
+        catch (e) { toast('Failed: ' + e.message, 4000); }
+      }
+      async function deletePost(p) {
+        if (!confirm('Delete “' + p.title + '” for good?')) return;
+        try { await rpc('admin_post_delete', { p_pass: pass, p_id: p.id }); toast('Deleted'); await loadPosts(); if (p.event_date && p.status === 'approved') pingCalendar(); } catch (e) { toast('Failed: ' + e.message, 4000); }
+      }
+      function openPostEditor(p) {
+        const box = $('post-editor'); box.innerHTML = ''; box.hidden = false;
+        postForm = NPPosts.form(p || {}, { submitLabel: p ? 'Save' : 'Publish' });
+        const msg = el('span', { class: 'muted' });
+        const save = el('button', { class: 'btn small', type: 'button', onclick: async () => {
+          const bad = postForm.validate(); if (bad) { msg.textContent = bad; return; }
+          save.disabled = true; msg.textContent = 'Saving…';
+          let v = postForm.values();
+          try {
+            v = await postForm.finalize();
+            // the repeat fields only go along when used (or being cleared), so plain posts still save before supabase/repeat.sql is run
+            const withRepeat = v.repeat || (p && p.repeat);
+            const id = await rpc('admin_post_save', Object.assign({ p_pass: pass, p_id: p ? p.id : null, p_title: v.title, p_details: v.details, p_event_date: v.event_date, p_start_time: v.start_time, p_end_time: v.end_time, p_location: v.location, p_link: v.link, p_flyer_url: v.flyer_url, p_by: null },
+              withRepeat ? { p_repeat: v.repeat, p_repeat_until: v.repeat_until, p_repeat_show: v.repeat_show } : {}));
+            toast(p ? 'Saved' : '“' + v.title + '” is on the home page'); box.hidden = true; box.innerHTML = ''; await loadPosts();
+            if (v.event_date || (p && p.event_date)) pingCalendar();
+          } catch (e) { msg.textContent = 'Not saved: ' + (/admin_post_save/.test(e.message) ? (v.repeat ? 'run supabase/repeat.sql first (repeating posts)' : 'run supabase/posts.sql first') : e.message); save.disabled = false; }
+        } }, p ? 'Save changes' : 'Publish now');
+        box.appendChild(el('h3', { style: 'margin:0 0 10px' }, p ? 'Edit post' : 'New post'));
+        box.appendChild(postForm.el);
+        box.appendChild(el('div', { class: 'inline' }, [save, el('button', { class: 'btn small secondary', type: 'button', onclick: () => { box.hidden = true; box.innerHTML = ''; } }, 'Cancel'), msg]));
+        box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        postForm.focus();
+      }
+      $('post-new').addEventListener('click', () => openPostEditor(null));
+
+      // ---- "Text a reminder": one SimpleTexting campaign to the whole ward list, via the Google script ----
+      // The wording is shown first (editable), with how many people are on the list; nothing goes
+      // out until "Send to N people" is tapped. The script stamps the post (reminded_at) afterwards.
+      const gsm = t => t.replace(/[\u2013\u2014]/g, '-').replace(/[\u2018\u2019]/g, '\'').replace(/[\u201c\u201d]/g, '"').replace(/\u00b7/g, '-').replace(/\u2026/g, '...');
+      function reminderText(p, shortLink) {
+        const site = (typeof location !== 'undefined' && location.origin) || '';
+        const occ = p.event_date ? NPPosts.occurrences(p, 1).find(o => !o.cancelled) : null;
+        const dp = occ ? NPPosts.dateParts(occ.date) : null;
+        const t = NPPosts.todayIso(), [y, m, d] = t.split('-').map(Number), tm = new Date(Date.UTC(y, m - 1, d + 1)).toISOString().slice(0, 10);
+        const day = occ ? (occ.date === t ? 'Today' : occ.date === tm ? 'Tomorrow' : dp.dow) : '';
+        const when = dp ? day + ' ' + dp.mon + ' ' + dp.d + (p.start_time ? ' at ' + NPPosts.fmtTime(p.start_time) : '') : '';
+        // e/<id> is the page the Google script publishes with the post's preview tags (flyer, title, date
+        // show under the link in Messages / WhatsApp); e.html?id= always works but previews plain
+        return gsm((C.wardName || 'Ward') + ': ' + p.title + (when ? ' - ' + when : '') + (p.location ? ', ' + p.location : '') + '. Details' + (p.flyer_url ? ' + flyer' : '') + ': ' + site + (shortLink ? '/e/' + p.id : '/e.html?id=' + p.id));
+      }
+      const previewPageExists = id => fetch('e/' + id + '.html', { method: 'HEAD', cache: 'no-store' }).then(r => r.ok).catch(() => false);
+      const smsSegments = t => { const n = [...t].length; return /[^\x00-\x7f]/.test(t) ? (n <= 70 ? 1 : Math.ceil(n / 67)) : (n <= 160 ? 1 : Math.ceil(n / 153)); };
+      async function openReminder(p, cardEl) {
+        cardEl.querySelectorAll('.remind-box').forEach(x => x.remove());
+        const hasPage = await previewPageExists(p.id);
+        const ta = el('textarea', { rows: 4, maxlength: 900, style: 'width:100%' });
+        ta.value = reminderText(p, hasPage);
+        const mms = el('input', { type: 'checkbox' });
+        const media = () => p.flyer_url && mms.checked ? p.flyer_url : '';
+        const count = el('span', { class: 'muted small' }), listMsg = el('p', { class: 'muted small', style: 'margin:0' }, 'Checking the list…'), msg = el('span', { class: 'muted small' });
+        const send = el('button', { class: 'btn small', type: 'button', disabled: '' }, 'Send');
+        const paintCount = () => { const n = [...ta.value].length, seg = smsSegments(ta.value); count.textContent = n + ' characters · ' + seg + ' text' + (seg === 1 ? '' : 's') + (/[^\x00-\x7f]/.test(ta.value) ? ' (special characters shorten texts — plain quotes and dashes fit more)' : ''); };
+        ta.addEventListener('input', paintCount); paintCount();
+        // a test to one phone first (the single-number path the Warning / Magnet texts use), remembered per device
+        const testPhone = el('input', { type: 'tel', placeholder: 'your mobile', inputmode: 'tel', style: 'width:150px', value: (() => { try { return localStorage.getItem('np_test_phone') || ''; } catch (e) { return ''; } })() });
+        const testBtn = el('button', { class: 'chip', type: 'button', onclick: async () => {
+          const digits = testPhone.value.replace(/\D/g, ''); if (digits.length < 10) { msg.textContent = 'Enter a 10-digit mobile number for the test.'; return; }
+          testBtn.disabled = true; msg.textContent = 'Sending the test…';
+          try {
+            const r = await fetch(C.sheetsRefreshUrl, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ action: 'notify', pass, name: 'Test', phone: digits, email: '', flag: 'test', sms: '[TEST] ' + ta.value.trim(), media: media() }) }).then(x => x.json());
+            if (!r.ok || r.sms !== 'sent') throw new Error(r.error || ('text ' + r.sms));
+            try { localStorage.setItem('np_test_phone', digits); } catch (e) {}
+            msg.textContent = 'Test sent to ' + digits.replace(/(\d{3})(\d{3})(\d{4})$/, '$1-$2-$3') + ' — nothing went to the list.';
+          } catch (e) { msg.textContent = 'Test not sent: ' + e.message; }
+          testBtn.disabled = false;
+        } }, 'Text a test to');
+        const box = el('div', { class: 'remind-box' }, [
+          el('b', {}, 'Text a reminder'),
+          listMsg,
+          p.reminded_at ? el('p', { class: 'muted small', style: 'margin:0' }, 'A reminder for this already went out ' + whenShort(p.reminded_at) + '.') : null,
+          !hasPage ? el('p', { class: 'muted small', style: 'margin:0' }, 'This post’s preview page isn’t published yet, so the link won’t show the flyer under the text — Rebuild calendar files (Email version) and wait a minute, then reopen this.') : null,
+          ta, count,
+          p.flyer_url ? el('label', { class: 'inline muted small', style: 'gap:6px' }, [mms, 'Attach the flyer as a picture (MMS — uses more credits per text than a link)']) : null,
+          el('div', { class: 'inline' }, [testBtn, testPhone, el('span', { class: 'muted small' }, 'first, if you like')]),
+          el('div', { class: 'inline' }, [send, el('button', { class: 'chip', type: 'button', onclick: () => box.remove() }, 'Cancel'), msg]),
+        ]);
+        cardEl.querySelector('.post-actions').before(box);
+        let contacts = null, list = '';
+        try {
+          const r = await fetch(C.sheetsRefreshUrl, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ action: 'remind', pass, preview: true }) }).then(x => x.json());
+          if (!r.ok) throw new Error(r.error || 'unknown error');
+          contacts = r.contacts; list = r.list;
+          listMsg.textContent = 'Goes to the SimpleTexting list “' + list + '” — ' + contacts + ' people. Everyone on it gets this, so read it once more.';
+          send.textContent = (p.reminded_at ? 'Send again to ' : 'Send to ') + contacts + ' people'; send.disabled = false;
+        } catch (e) { listMsg.textContent = 'Could not reach the list: ' + (/unknown action/.test(e.message) ? 'the Google script needs the newest announcements.gs deployed' : e.message); }
+        send.addEventListener('click', async () => {
+          const text = ta.value.trim(); if (!text) { msg.textContent = 'Nothing to send.'; return; }
+          if (!confirm('Send this text to ' + contacts + ' people on “' + list + '”?\n\n' + text)) return;
+          send.disabled = true; msg.textContent = 'Sending…';
+          try {
+            const r = await fetch(C.sheetsRefreshUrl, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ action: 'remind', pass, postId: p.id, title: p.title, text, media: media() }) }).then(x => x.json());
+            if (!r.ok) throw new Error(r.error || 'unknown error');
+            toast('Sent to ' + r.contacts + ' people' + (r.note ? ' — ' + r.note : ''), 5000); box.remove(); await loadPosts();
+          } catch (e) { msg.textContent = 'Not sent: ' + e.message; send.disabled = false; }
+        });
+        ta.focus();
+      }
+
+      // The Google script publishes calendar.ics + cal/<id>.ics from the approved posts (the "Add to
+      // calendar" links and the subscribable ward calendar). Ask it to rebuild right after a change;
+      // it also runs with every 6-hour sheet sync, so a miss here just means a short delay.
+      let calendarBusy = false;
+      async function pingCalendar(btn) {
+        if (!C.sheetsRefreshUrl || calendarBusy) return;
+        calendarBusy = true; const msg = $('pe-cal-msg'); if (btn) { btn.disabled = true; msg.textContent = 'Rebuilding…'; }
+        try {
+          const r = await fetch(C.sheetsRefreshUrl, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ action: 'calendar', pass }) }).then(x => x.json());
+          if (!r.ok) throw new Error(r.error || 'unknown error');
+          const n = (r.written || []).length + (r.deleted || []).length;
+          msg.textContent = (n ? n + ' file' + (n === 1 ? '' : 's') + ' updated — live on the site in about a minute.' : 'Already up to date.') + ' ' + r.events + ' event' + (r.events === 1 ? '' : 's') + ' in the ward calendar.';
+        } catch (e) {
+          const t = /unknown action/.test(e.message) ? 'the Google script needs the newest announcements.gs deployed' : e.message;
+          msg.textContent = 'Calendar files not updated: ' + t; if (!btn) toast('Calendar files not updated — ' + t, 5000);
+        } finally { calendarBusy = false; if (btn) btn.disabled = false; }
+      }
+      $('pe-cal-rebuild').addEventListener('click', e => pingCalendar(e.currentTarget));
+
+      // ---- the weekly email built from the live posts ----
+      let emailSettings = null;
+      async function openEmailPanel() {
+        const panel = $('post-email-panel'); panel.hidden = false; $('pe-msg').textContent = 'Building…';
+        try {
+          if (!emailSettings) {
+            const rows = await rpc('admin_get_settings', { p_pass: pass }); const st = Object.fromEntries(rows.map(r => [r.key, r.value]));
+            emailSettings = { header: st.posts_email_header || NPPosts.EMAIL_DEFAULTS.header, footer: st.posts_email_footer || NPPosts.EMAIL_DEFAULTS.footer };
+            $('pe-header').value = emailSettings.header; $('pe-footer').value = emailSettings.footer;
+          }
+          if (!$('pe-title').value) $('pe-title').value = (C.wardName || 'Ward') + ' — Weekly Announcements · ' + new Date().toLocaleDateString('en-US', { timeZone: C.timeZone, month: 'short', day: 'numeric' });
+          await paintEmail(); $('pe-msg').textContent = '';
+          panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } catch (e) { $('pe-msg').textContent = /posts_public/.test(e.message) ? 'Run supabase/posts.sql first.' : 'Could not build it: ' + e.message; }
+      }
+      let livePosts = [];
+      async function paintEmail() {
+        livePosts = await rpc('posts_public') || [];
+        const o = { title: $('pe-title').value.trim(), header: $('pe-header').value, footer: $('pe-footer').value };
+        $('pe-preview').innerHTML = NPPosts.emailHtml(livePosts, o);
+        $('pe-plain').value = NPPosts.emailPlain(livePosts, o);
+        paintFlyerPicker();
+        if (!livePosts.length) $('pe-msg').textContent = 'No live posts yet — approve or add some first.';
+      }
+      ['pe-title', 'pe-header', 'pe-footer'].forEach(id => $(id).addEventListener('input', () => { const o = { title: $('pe-title').value.trim(), header: $('pe-header').value, footer: $('pe-footer').value }; $('pe-preview').innerHTML = NPPosts.emailHtml(livePosts, o); $('pe-plain').value = NPPosts.emailPlain(livePosts, o); }));
+      $('post-email').addEventListener('click', openEmailPanel);
+      $('pe-close').addEventListener('click', () => { $('post-email-panel').hidden = true; });
+      $('pe-save').addEventListener('click', async () => {
+        try {
+          await rpc('admin_set_setting', { p_pass: pass, p_key: 'posts_email_header', p_value: $('pe-header').value });
+          await rpc('admin_set_setting', { p_pass: pass, p_key: 'posts_email_footer', p_value: $('pe-footer').value });
+          emailSettings = { header: $('pe-header').value, footer: $('pe-footer').value }; $('pe-msg').textContent = 'Wording saved.';
+        } catch (e) { $('pe-msg').textContent = 'Not saved: ' + e.message; }
+      });
+      async function copyEmail(rich) {
+        const html = $('pe-preview').innerHTML, text = $('pe-plain').value;
+        try {
+          if (rich && navigator.clipboard && window.ClipboardItem) {
+            await navigator.clipboard.write([new ClipboardItem({ 'text/html': new Blob([html], { type: 'text/html' }), 'text/plain': new Blob([text], { type: 'text/plain' }) })]);
+          } else if (rich) {
+            const r = document.createRange(); r.selectNodeContents($('pe-preview')); const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r); document.execCommand('copy'); sel.removeAllRanges();
+          } else { await navigator.clipboard.writeText(text); }
+          $('pe-msg').textContent = rich ? 'Copied with formatting — paste into the email body.' : 'Plain text copied.';
+        } catch (e) { $('pe-msg').textContent = 'Copy failed (' + e.message + ') — select the text below and copy it by hand.'; }
+      }
+      $('pe-copy-html').addEventListener('click', () => copyEmail(true));
+      function paintFlyerPicker() {
+        const box = $('pe-flyer-list'); box.innerHTML = '';
+        // one entry per flyer: two posts can share an image (the FHE calendar), and it only needs attaching once
+        const byUrl = new Map();
+        livePosts.filter(p => p.flyer_url).forEach(p => { const g = byUrl.get(p.flyer_url); if (g) g.also.push(p.title); else byUrl.set(p.flyer_url, { post: p, also: [] }); });
+        if (!byUrl.size) { box.appendChild(el('p', { class: 'muted' }, 'No flyers on the live posts.')); return; }
+        [...byUrl.values()].forEach(({ post: p, also }) => box.appendChild(el('label', { class: 'flyer-opt' }, [
+          el('input', { type: 'checkbox', checked: '', 'data-id': p.id }),
+          el('img', { src: p.flyer_url, alt: '' }),
+          el('span', {}, [el('b', {}, p.title), el('span', { class: 'muted small' }, (p.event_date ? ' · ' + NPPosts.dateParts(p.event_date).long : '') + (also.length ? ' · also used by ' + also.join(', ') : ''))]),
+        ])));
+      }
+      const pickedFlyers = () => { const ids = new Set([...document.querySelectorAll('#pe-flyer-list input:checked')].map(i => +i.dataset.id)); return livePosts.filter(p => ids.has(p.id)); };
+      async function downloadPicked(zip) {
+        const picked = pickedFlyers(); if (!picked.length) { $('pe-msg').textContent = 'Nothing ticked.'; return; }
+        $('pe-msg').textContent = 'Fetching ' + picked.length + ' flyer' + (picked.length === 1 ? '' : 's') + '…';
+        const r = await NPPosts.downloadFlyers(picked, { zip, name: 'flyers-' + NPPosts.todayIso() });
+        $('pe-msg').textContent = (r.count ? r.count + ' flyer' + (r.count === 1 ? '' : 's') + (zip ? ' in one .zip — unzip, select all, drag onto LCR’s Attachments box.' : ' downloaded.') : 'Nothing downloaded.') + (r.failed.length ? ' Could not fetch: ' + r.failed.join(', ') : '');
+      }
+      $('pe-flyers-zip').addEventListener('click', () => downloadPicked(true));
+      $('pe-flyers-each').addEventListener('click', () => downloadPicked(false));
+      $('pe-flyers-all').addEventListener('click', () => document.querySelectorAll('#pe-flyer-list input').forEach(i => { i.checked = true; }));
+      $('pe-flyers-none').addEventListener('click', () => document.querySelectorAll('#pe-flyer-list input').forEach(i => { i.checked = false; }));
+      $('pe-copy-text').addEventListener('click', () => copyEmail(false));
+
+      // ---- settings: roll classes (dynamic — ward-configured, can change any time) ----
+      let rcClasses = [];
+      function renderRollClasses() {
+        const box = $('rc-list'); box.innerHTML = '';
+        if (!rcClasses.length) { box.appendChild(el('p', { class: 'muted' }, 'No roll classes yet — add one below.')); return; }
+        for (const c of rcClasses) {
+          const k = c.key;
+          box.appendChild(el('div', { class: 'inline rc-row', style: 'align-items:flex-end;margin-bottom:8px;flex-wrap:wrap' }, [
+            el('span', { class: 'muted small', style: 'min-width:100px' }, k),
+            el('div', { class: 'field', style: 'margin:0' }, [el('label', {}, 'Label'), el('input', { type: 'text', maxlength: 60, value: c.label, oninput: e => { c.label = e.target.value; } })]),
+            el('div', { class: 'field', style: 'margin:0' }, [el('label', {}, 'Short'), el('input', { type: 'text', maxlength: 30, value: c.short || '', style: 'max-width:110px', oninput: e => { c.short = e.target.value; } })]),
+            el('div', { class: 'field', style: 'margin:0' }, [el('label', {}, 'Opens'), el('input', { type: 'time', value: c.winStart || '', oninput: e => { c.winStart = e.target.value; } })]),
+            el('div', { class: 'field', style: 'margin:0' }, [el('label', {}, 'Closes'), el('input', { type: 'time', value: c.winEnd || '', oninput: e => { c.winEnd = e.target.value; } })]),
+            el('button', { class: 'chip danger tiny', type: 'button', title: 'Remove this class', onclick: () => { if (!confirm('Remove “' + c.label + '”? Past attendance for it stays in the database, but it drops off the home page.')) return; rcClasses = rcClasses.filter(x => x.key !== k); renderRollClasses(); } }, '×'),
+          ]));
+        }
+      }
+      $('rc-add').addEventListener('click', () => {
+        const raw = $('rc-new-key').value.trim().toLowerCase().replace(/[^a-z0-9_]/g, '_');
+        if (!raw) { toast('Type a key first (e.g. young_men)'); return; }
+        if (rcClasses.some(c => c.key === raw)) { toast('That key is already in use'); return; }
+        rcClasses.push({ key: raw, label: raw.replace(/_/g, ' ').replace(/\b\w/g, ch => ch.toUpperCase()), short: '', orgTypeIds: [], winStart: '', winEnd: '' });
+        $('rc-new-key').value = ''; renderRollClasses();
+      });
+      async function loadSettings() {
+        let rows = [];
+        try { rows = await rpc('admin_get_settings', { p_pass: pass }); } catch (e) { $('w-msg').textContent = 'Run supabase/windows.sql first.'; return; }
+        const get = k => (rows.find(r => r.key === k) || {}).value;
+        classes = await NP.loadClasses();
+        rcClasses = classes.map(c => {
+          const [winStart, winEnd] = (get('window_' + c.key) || '-').split('-');
+          return { key: c.key, label: c.label, short: c.short || '', orgTypeIds: c.orgTypeIds || [], orgs: c.orgs, winStart: winStart || '', winEnd: winEnd || '' };
+        });
+        renderRollClasses();
+        $('w-day').value = get('window_day') || '0';
+        $('w-enforce').checked = (get('roll_enforce_window') || 'true') === 'true';
+        showTextListSummary(get('textlist_last_sync'));
+        for (const [id, key] of TPL) $(id).value = get(key) || '';
+        $('b-phone').value = (get('bishop_notify_phone') || '').replace(/^(\d{3})(\d{3})(\d{4})$/, '$1-$2-$3');
+        $('b-msg').textContent = rows.some(r => r.key === 'bishop_notify_phone') ? '' : 'Run supabase/bishop.sql to switch the texts on.';
+        $('n-msg').textContent = rows.some(r => r.key === 'notify_warning_sms') ? '' : 'Run supabase/flags.sql to get the starter messages.';
+      }
+      const TPL = [['n-from', 'notify_from_name'], ['n-from-email', 'notify_from_email'], ['n-reply', 'notify_reply_to'], ['n-due-warning', 'flag_due_days_warning'], ['n-due-magnet', 'flag_due_days_magnet'], ['n-warning-sms', 'notify_warning_sms'], ['n-warning-subject', 'notify_warning_email_subject'], ['n-warning-email', 'notify_warning_email'], ['n-magnet-sms', 'notify_magnet_sms'], ['n-magnet-subject', 'notify_magnet_email_subject'], ['n-magnet-email', 'notify_magnet_email']];
+      $('t-send').addEventListener('click', async () => {
+        const phone = $('t-phone').value.replace(/\D/g, ''); const msg = $('t-msg');
+        if (phone.length < 10) { msg.textContent = 'Type a 10-digit cell number first.'; return; }
+        $('t-send').disabled = true; msg.textContent = 'Sending…';
+        try { await NPCallings.sendTestText(phone, 'Test text — texting is set up. (' + (C.wardName || 'Ward') + ')'); msg.textContent = 'Sent — check your phone.'; try { localStorage.setItem('np_test_phone', $('t-phone').value); } catch (e) {} }
+        catch (e) { msg.textContent = 'Not sent: ' + e.message; }
+        finally { $('t-send').disabled = false; }
+      });
+      try { $('t-phone').value = localStorage.getItem('np_test_phone') || ''; } catch (e) {}
+      // text list sync: last result + "Sync now"
+      function showTextListSummary(raw) {
+        const box = $('tl-last'); if (!raw) { box.textContent = 'No sync yet.'; return; }
+        let r; try { r = typeof raw === 'string' ? JSON.parse(raw) : raw; } catch (e) { box.textContent = raw; return; }
+        const when = r.at ? new Date(r.at).toLocaleString('en-US', { timeZone: C.timeZone, month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }) : '';
+        const n = k => r[k] == null ? 0 : r[k];
+        box.textContent = `Last sync ${when}: ${n('responses')} form responses, ${n('answered')} answered the texting question, ${n('optedIn')} agreed` + (n('declined') ? ` (${n('declined')} opted out)` : '') + ` · ${n('added')} added, ${n('addedToList')} put on the list, ${n('alreadyOnList')} already there, ${n('optedOut')} replied STOP (left alone)` + (n('noPhoneCount') ? ` · ${n('noPhoneCount')} agreed but gave no usable number${r.noPhone && r.noPhone.length ? ' (' + r.noPhone.slice(0, 5).join(', ') + (r.noPhone.length > 5 ? '…' : '') + ')' : ''}` : '') + (r.errors && r.errors.length ? ` · ${r.errors.length} error${r.errors.length === 1 ? '' : 's'}: ${r.errors.slice(0, 3).join('; ')}` : '');
+      }
+      $('tl-sync').addEventListener('click', async () => {
+        const msg = $('tl-msg'); $('tl-sync').disabled = true; msg.textContent = 'Syncing… (30–60 s)';
+        try {
+          if (!C.sheetsRefreshUrl) throw new Error('the Google script web app URL is not set');
+          const r = await fetch(C.sheetsRefreshUrl, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ action: 'textlist', pass }) });
+          const j = await r.json(); if (!j.ok) throw new Error(j.error || 'sync failed');
+          msg.textContent = 'Done.'; showTextListSummary(j);
+        } catch (e) { msg.textContent = 'Not synced: ' + e.message; }
+        finally { $('tl-sync').disabled = false; }
+      });
+      $('b-save').addEventListener('click', async () => {
+        const digits = $('b-phone').value.replace(/\D/g, '').replace(/^1(\d{10})$/, '$1');
+        if (digits && digits.length !== 10) { $('b-msg').textContent = 'Enter a 10-digit number (or leave it blank).'; return; }
+        try { await rpc('admin_set_setting', { p_pass: pass, p_key: 'bishop_notify_phone', p_value: digits }); $('b-msg').textContent = digits ? 'Saved — new requests go to ' + digits.replace(/^(\d{3})(\d{3})(\d{4})$/, '$1-$2-$3') + '.' : 'Saved — texts are off.'; }
+        catch (e) { $('b-msg').textContent = 'Not saved: ' + e.message; }
+      });
+      $('n-save').addEventListener('click', async () => {
+        try {
+          for (const [id, key] of TPL) await rpc('admin_set_setting', { p_pass: pass, p_key: key, p_value: $(id).value });
+          $('n-msg').textContent = 'Saved.'; if (window.NPCallings) NPCallings.refresh();
+        } catch (e) { $('n-msg').textContent = 'Not saved: ' + e.message; }
+      });
+      $('w-save').addEventListener('click', async () => {
+        if (!rcClasses.length) { $('w-msg').textContent = 'Add at least one roll class first.'; return; }
+        try {
+          const payload = rcClasses.map(c => Object.assign({ key: c.key, label: c.label, short: c.short || c.label, orgTypeIds: c.orgTypeIds || [] }, c.orgs ? { orgs: c.orgs } : {}));
+          await rpc('admin_set_roll_classes', { p_pass: pass, p_classes: payload });
+          for (const c of rcClasses) if (c.winStart && c.winEnd) await rpc('admin_set_setting', { p_pass: pass, p_key: 'window_' + c.key, p_value: c.winStart + '-' + c.winEnd });
+          await rpc('admin_set_setting', { p_pass: pass, p_key: 'window_day', p_value: $('w-day').value });
+          await rpc('admin_set_setting', { p_pass: pass, p_key: 'roll_enforce_window', p_value: $('w-enforce').checked ? 'true' : 'false' });
+          classes = rcClasses;
+          $('w-msg').textContent = 'Saved — the site picks it up within 15 seconds.';
+        } catch (e) { $('w-msg').textContent = 'Not saved: ' + e.message; }
+      });
+      document.querySelector('.tab[data-pane=settings]').addEventListener('click', loadSettings);
+      $('import-btn').addEventListener('click', async () => {
+        let data;
+        try { data = JSON.parse($('import-json').value); if (!Array.isArray(data)) throw new Error('not an array'); } catch (e) { $('import-msg').textContent = 'Invalid JSON: ' + e.message; return; }
+        try {
+          const r = (await rpc('admin_upsert_members', { p_pass: pass, p_members: data, p_deactivate_missing: true }))[0];
+          $('import-msg').textContent = `Imported: ${r.inserted} new, ${r.updated} updated, ${r.deactivated} deactivated.`;
+          await loadMembers();
+        } catch (e) { $('import-msg').textContent = 'Import failed: ' + e.message; }
+      });
+    })();
+  </script>
+</body>
+</html>

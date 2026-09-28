@@ -1,0 +1,26 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//North Point YSA//northpointysa.com//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:FHE: Karaoke and Chick-fil-A
+X-WR-TIMEZONE:America/New_York
+X-PUBLISHED-TTL:PT1H
+REFRESH-INTERVAL;VALUE=DURATION:PT1H
+BEGIN:VEVENT
+UID:post-1@northpointysa.com
+DTSTAMP:20260918T141142Z
+DTSTART:20260921T230000Z
+DTEND:20260922T010000Z
+SUMMARY:FHE: Karaoke and Chick-fil-A
+LOCATION:Roswell Stake Center\, 500 Norcross Street
+DESCRIPTION:Monday night FHE — karaoke\, with Chick-fil-A. See the flyer
+  for the whole September FHE schedule.\nFlyer: https://northpointysa.co
+ m/img/posts/fhe-september.jpg\nEverything\, always up to date: https://
+ northpointysa.com
+URL:https://northpointysa.com
+CREATED:20260918T141142Z
+LAST-MODIFIED:20260918T141142Z
+SEQUENCE:0
+END:VEVENT
+END:VCALENDAR

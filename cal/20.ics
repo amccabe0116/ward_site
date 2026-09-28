@@ -1,0 +1,29 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//North Point YSA//northpointysa.com//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Worldwide Devotional for Young Adults
+X-WR-TIMEZONE:America/New_York
+X-PUBLISHED-TTL:PT1H
+REFRESH-INTERVAL;VALUE=DURATION:PT1H
+BEGIN:VEVENT
+UID:post-20@northpointysa.com
+DTSTAMP:20260927T040142Z
+DTSTART:20261102T010000Z
+DTEND:20261102T020000Z
+SUMMARY:Worldwide Devotional for Young Adults
+DESCRIPTION:Church leaders speak to young adults (18–35) around the worl
+ d — counsel meant especially for us. 8:00 PM Eastern (6:00 PM Mountain)
+ \, about an hour. Watch live on ChurchofJesusChrist.org or the Gospel L
+ ibrary app\, or gather with friends to watch it together.\nfeaturing: E
+ lder Quentin L. Cook\nSign up / details: https://events.churchofjesusch
+ rist.org\nFlyer: https://utkbhlyvmfbtjyfqeoze.supabase.co/storage/v1/ob
+ ject/public/flyers/uploads/94ad03c2-6339-48dd-89c1-ac05a5db0370.jpg\nEv
+ erything\, always up to date: https://northpointysa.com
+URL:https://events.churchofjesuschrist.org
+CREATED:20260927T025844Z
+LAST-MODIFIED:20260927T040142Z
+SEQUENCE:62
+END:VEVENT
+END:VCALENDAR

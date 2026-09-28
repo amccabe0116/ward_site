@@ -1,0 +1,26 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//North Point YSA//northpointysa.com//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Building cleaning
+X-WR-TIMEZONE:America/New_York
+X-PUBLISHED-TTL:PT1H
+REFRESH-INTERVAL;VALUE=DURATION:PT1H
+BEGIN:VEVENT
+UID:post-35@northpointysa.com
+DTSTAMP:20260927T164529Z
+DTSTART:20261003T130000Z
+DTEND:20261003T150000Z
+SUMMARY:Building cleaning
+LOCATION:Roswell Stake Center\, 500 Norcross Street
+DESCRIPTION:Help clean our building — about an hour\, 6 of us wanted. Pu
+ t your name down (or someone you asked): https://northpointysa.com/clea
+ ning.html\nSign up / details: https://northpointysa.com/cleaning.html\n
+ Everything\, always up to date: https://northpointysa.com
+URL:https://northpointysa.com/cleaning.html
+CREATED:20260927T164529Z
+LAST-MODIFIED:20260927T164529Z
+SEQUENCE:0
+END:VEVENT
+END:VCALENDAR

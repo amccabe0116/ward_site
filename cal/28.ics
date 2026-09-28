@@ -1,0 +1,27 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//North Point YSA//northpointysa.com//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Worldwide Devotional for Young Adults
+X-WR-TIMEZONE:America/New_York
+X-PUBLISHED-TTL:PT1H
+REFRESH-INTERVAL;VALUE=DURATION:PT1H
+BEGIN:VEVENT
+UID:post-28@northpointysa.com
+DTSTAMP:20260927T025845Z
+DTSTART:20270503T000000Z
+DTEND:20270503T010000Z
+SUMMARY:Worldwide Devotional for Young Adults
+DESCRIPTION:A member of the Quorum of the Twelve speaks to young adults 
+ (18–35) around the world. 8:00 PM Eastern (6:00 PM Mountain)\, about an
+  hour. Watch live on ChurchofJesusChrist.org or the Gospel Library app\
+ , or gather with friends to watch it together.\nSign up / details: http
+ s://events.churchofjesuschrist.org\nEverything\, always up to date: htt
+ ps://northpointysa.com
+URL:https://events.churchofjesuschrist.org
+CREATED:20260927T025845Z
+LAST-MODIFIED:20260927T025845Z
+SEQUENCE:0
+END:VEVENT
+END:VCALENDAR

@@ -1,0 +1,26 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//North Point YSA//northpointysa.com//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:FHE: Kickball at Abernathy Greenway
+X-WR-TIMEZONE:America/New_York
+X-PUBLISHED-TTL:PT1H
+REFRESH-INTERVAL;VALUE=DURATION:PT1H
+BEGIN:VEVENT
+UID:post-5@northpointysa.com
+DTSTAMP:20260918T141142Z
+DTSTART:20260928T230000Z
+DTEND:20260929T010000Z
+SUMMARY:FHE: Kickball at Abernathy Greenway
+LOCATION:Abernathy Greenway Park
+DESCRIPTION:Kickball\, with pizza\, fruit and chips. A GPS pin for where
+  we're meeting in the park goes out in the WhatsApp the weekend before.
+ \nFlyer: https://northpointysa.com/img/posts/fhe-september.jpg\nEveryth
+ ing\, always up to date: https://northpointysa.com
+URL:https://northpointysa.com
+CREATED:20260918T141142Z
+LAST-MODIFIED:20260918T141142Z
+SEQUENCE:0
+END:VEVENT
+END:VCALENDAR

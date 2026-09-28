@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Ward</title>
+  <meta name="description" content="Sunday roll, what's happening this month, and how to connect.">
+  <meta name="theme-color" content="#1b2a41">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%231b2a41'/><text x='50' y='68' font-size='52' text-anchor='middle' fill='%23e2c377' font-family='Georgia'>W</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="app.css?v=18">
+</head>
+<body>
+  <header class="hero">
+    <p class="eyebrow">The Church of Jesus Christ of Latter-day Saints</p>
+    <h1 id="ward-name">Ward</h1>
+    <p class="date" id="today"></p>
+  </header>
+
+  <main class="wrap">
+    <nav class="choices" aria-label="Take roll" id="choices"></nav>
+
+    <section aria-labelledby="connect-title" id="connect" hidden>
+      <div class="section-title">
+        <h2 id="connect-title">Connect with us</h2>
+      </div>
+      <div class="card connect">
+        <p class="connect-sub">Ward chatter, rides, last-minute plans — join the group and the chat.</p>
+        <nav class="links" id="links" aria-label="Community links"></nav>
+        <p class="connect-hint muted" id="connect-hint"></p>
+        <p class="connect-sub second">Need to talk with the Bishop? Send a request straight to leadership.</p>
+        <nav class="help-links" aria-label="Notes to leadership">
+          <a class="help-link" href="bishop.html">
+            <span class="icon" id="icon-bishop"></span>
+            <span><span class="label">Meet with the Bishop</span><span class="sub">Interviews, temple recommends, or just to talk</span></span>
+            <span class="chev" id="chev-bishop"></span>
+          </a>
+        </nav>
+      </div>
+    </section>
+
+    <!-- sign-ups: missionary meals, when switched on -->
+    <section aria-labelledby="serve-title" id="serve" hidden>
+      <div class="section-title">
+        <h2 id="serve-title">Sign up</h2>
+      </div>
+      <nav class="help-links" aria-label="Sign-ups">
+        <a class="help-link meals" href="meals.html" id="meals-link" hidden>
+          <span class="icon" id="icon-meals"></span>
+          <span><span class="label">Feed the missionaries</span><span class="sub">Pick a companionship and a day.</span></span>
+          <span class="chev" id="chev-meals"></span>
+        </a>
+      </nav>
+    </section>
+
+    <section aria-labelledby="ann-title" id="happening">
+      <div class="section-title">
+        <h2 id="ann-title">What’s happening</h2>
+        <a class="chip add-post" href="post.html" id="add-post">+ Share something</a>
+      </div>
+      <div id="posts"><p class="empty">Loading…</p></div>
+      <p class="cal-hint" id="cal-hint" hidden>Want these in your own calendar? <a href="calendar.html">Subscribe to the ward calendar</a> — new activities show up by themselves.</p>
+      <details class="email-block" id="email-block" hidden>
+        <summary><span>This week’s announcements email</span><span class="meta" id="ann-meta"></span></summary>
+        <div class="card" id="announcements"></div>
+      </details>
+    </section>
+
+    <p class="footer footer-row"><a href="keys.html">The keys</a><span id="footer-ward"></span><a href="admin.html">Leaders</a></p>
+  </main>
+
+  <script src="config.js"></script>
+  <script src="app.js?v=5"></script>
+  <script src="posts.js?v=13"></script>
+  <script>
+    (function () {
+      const { el, fmtDate, linkify, escapeHtml, icons } = NP;
+      document.title = NP.C.wardName || 'Ward';
+      document.getElementById('ward-name').textContent = NP.C.wardName || 'Ward';
+      document.getElementById('footer-ward').textContent = NP.C.wardName || 'Ward';
+      document.getElementById('icon-bishop').innerHTML = icons.handshake;
+      document.getElementById('chev-bishop').innerHTML = icons.chevron;
+      document.getElementById('icon-meals').innerHTML = icons.meal;
+      document.getElementById('chev-meals').innerHTML = icons.chevron;
+      // the sign-up cards show only when there is something to sign up for; the section shows with the first card
+      const showCard = id => { document.getElementById(id).hidden = false; document.getElementById('serve').hidden = false; };
+      NP.rpc('meals_public').then(m => { if (m && m.enabled && (m.companionships || []).length) showCard('meals-link'); }).catch(() => {});
+
+      const links = document.getElementById('links');
+      const L = NP.C.links || {};
+      const defs = [
+        ['facebook', 'Facebook group', icons.facebook],
+        ['whatsapp', 'WhatsApp chat', icons.whatsapp],
+      ];
+      for (const [k, label, icon] of defs) {
+        if (!L[k]) continue;
+        links.appendChild(el('a', { class: 'link ' + k, href: L[k], target: '_blank', rel: 'noopener' }, [el('span', { class: 'ic', html: icon }), label]));
+      }
+      if (L.textList && L.textList.number) {
+        const digits = L.textList.number.replace(/\D/g, '');
+        const href = 'sms:+1' + digits + '?&body=' + encodeURIComponent(L.textList.body || '');
+        links.appendChild(el('a', { class: 'link sms', href, title: 'Text "please add me" with your name to ' + L.textList.number }, [el('span', { class: 'ic', html: icons.sms }), 'Ward text list']));
+        document.getElementById('connect-hint').textContent = 'Ward text list: text your name and “please add me” to ' + L.textList.number + ' — or tap the button and the message is started for you.';
+      }
+      links.hidden = !links.children.length;
+      document.getElementById('connect').hidden = false;
+
+      document.getElementById('today').textContent = new Date().toLocaleDateString('en-US', { timeZone: NP.C.timeZone, weekday: 'long', month: 'long', day: 'numeric' });
+
+      // Roll buttons: one per class the ward has configured (Leaders › Settings › Roll classes).
+      const choicesEl = document.getElementById('choices');
+      let choiceEls = [];
+      function renderChoices(classes) {
+        choicesEl.innerHTML = '';
+        choiceEls = [];
+        if (!classes.length) {
+          choicesEl.appendChild(el('p', { class: 'muted' }, 'Roll classes haven’t been set up yet — a leader can add them on the Leaders page.'));
+          return;
+        }
+        for (const c of classes) {
+          const sub = el('span', { class: 'sub' }, 'Check in for class');
+          const a = el('a', { class: 'choice', href: 'roll.html?class=' + encodeURIComponent(c.key), 'data-class': c.key }, [
+            el('span', { class: 'icon', html: icons.book }),
+            el('span', { class: 'text' }, [el('span', { class: 'label' }, c.label), sub]),
+            el('span', { class: 'chev', html: icons.chevron }),
+          ]);
+          a.addEventListener('click', e => { if (a.classList.contains('closed')) { e.preventDefault(); NP.toast(sub.textContent); } });
+          choicesEl.appendChild(a);
+          choiceEls.push(a);
+        }
+      }
+      function paintChoices() {
+        for (const a of choiceEls) {
+          const st = NP.windowState(a.dataset.class), sub = a.querySelector('.sub');
+          a.classList.toggle('closed', !st.open);
+          a.setAttribute('aria-disabled', st.open ? 'false' : 'true');
+          a.tabIndex = st.open ? 0 : -1;
+          sub.textContent = st.open ? 'Check in for class' : st.label;
+        }
+      }
+      NP.loadClasses().then(classes => { renderChoices(classes); return NP.loadWindows(); }).then(() => NP.everyTick(paintChoices));
+
+      // Posts: events and notices, soonest first (supabase/posts.sql). Until that SQL is run the
+      // weekly email below is all there is, so it opens by default.
+      const postsBox = document.getElementById('posts'), emailBlock = document.getElementById('email-block');
+      // The email is now written FROM the posts, so it only shows here when there are no posts.
+      let havePosts = false;
+      NP.rpc('posts_public').then(rows => {
+        NPPosts.renderPublic(postsBox, rows || []);
+        havePosts = (rows || []).length > 0;
+        if (havePosts) emailBlock.hidden = true; else emailBlock.open = true;
+        document.getElementById('cal-hint').hidden = !(rows || []).some(p => p.event_date);
+      }).catch(() => { postsBox.innerHTML = ''; postsBox.hidden = true; emailBlock.open = true; });
+
+      const box = document.getElementById('announcements');
+      const meta = document.getElementById('ann-meta');
+      // The weekly email: the database copy (editable by leaders) wins; the repo's JSON is the fallback.
+      const fromDb = NP.rpc('current_announcements').then(rows => { const a = rows && rows[0]; if (!a || (!a.text && !(a.images || []).length)) throw new Error('empty'); return a; });
+      const fromJson = () => fetch('announcements.json?v=' + Date.now(), { cache: 'no-store' }).then(r => r.ok ? r.json() : Promise.reject(new Error(r.status)));
+      fromDb.catch(fromJson)
+        .then(a => {
+          box.innerHTML = '';
+          if (!a || (!a.text && !(a.images && a.images.length))) return;
+          if (!havePosts) emailBlock.hidden = false;
+          if (a.sent_at) {
+            const d = new Date(a.sent_at);
+            meta.textContent = 'Posted ' + d.toLocaleDateString('en-US', { timeZone: NP.C.timeZone, month: 'short', day: 'numeric' });
+          }
+          if (a.text) box.appendChild(el('div', { class: 'announcement-body', html: linkify(a.text) }));
+          // long announcements start collapsed
+          requestAnimationFrame(() => {
+            if (emailBlock.open && box.scrollHeight > 720) {
+              box.classList.add('collapsed');
+              const more = el('button', { class: 'btn secondary more', onclick: () => { box.classList.remove('collapsed'); more.remove(); } }, 'Show all announcements');
+              box.after(more);
+            }
+          });
+          if (a.images && a.images.length) {
+            const g = el('div', { class: 'announcement-images' });
+            for (const im of a.images) {
+              const src = typeof im === 'string' ? im : im.path;
+              const label = typeof im === 'string' ? 'Announcement flyer' : (im.name || 'Announcement flyer');
+              g.appendChild(el('a', { href: src, target: '_blank', rel: 'noopener' }, el('img', { src, alt: label, loading: 'lazy' })));
+            }
+            box.appendChild(g);
+          }
+          if (a.files && a.files.length) {
+            const f = el('div', { class: 'announcement-files' });
+            for (const file of a.files) f.appendChild(el('a', { class: 'file', href: file.path, target: '_blank', rel: 'noopener' }, [el('span', { class: 'ic', html: icons.file }), file.name || file.path.split('/').pop()]));
+            box.appendChild(f);
+          }
+        })
+        .catch(() => { box.innerHTML = ''; });
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//North Point YSA//northpointysa.com//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Stake General Priesthood Meeting
+X-WR-TIMEZONE:America/New_York
+X-PUBLISHED-TTL:PT1H
+REFRESH-INTERVAL;VALUE=DURATION:PT1H
+BEGIN:VEVENT
+UID:post-6@northpointysa.com
+DTSTAMP:20260927T040421Z
+DTSTART:20261011T230000Z
+DTEND:20261012T000000Z
+SUMMARY:Stake General Priesthood Meeting
+LOCATION:Roswell Stake Center
+DESCRIPTION:For the men of the ward — please plan to attend.\nFlyer: htt
+ ps://utkbhlyvmfbtjyfqeoze.supabase.co/storage/v1/object/public/flyers/u
+ ploads/ebe30c0b-d98e-4a1a-86c3-395b9e65a47f.jpg\nEverything\, always up
+  to date: https://northpointysa.com
+URL:https://northpointysa.com
+CREATED:20260918T141142Z
+LAST-MODIFIED:20260927T040421Z
+SEQUENCE:12352
+END:VEVENT
+END:VCALENDAR

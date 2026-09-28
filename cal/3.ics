@@ -1,0 +1,31 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//North Point YSA//northpointysa.com//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Ward Service Project: Million Meal Pack
+X-WR-TIMEZONE:America/New_York
+X-PUBLISHED-TTL:PT1H
+REFRESH-INTERVAL;VALUE=DURATION:PT1H
+BEGIN:VEVENT
+UID:post-3@northpointysa.com
+DTSTAMP:20260918T141142Z
+DTSTART:20260926T140000Z
+DTEND:20260926T153000Z
+SUMMARY:Ward Service Project: Million Meal Pack
+LOCATION:State Farm Arena
+DESCRIPTION:As disciples of Christ\, we're called to serve. Let's show u
+ p\, show out\, and make an impact by helping pack meals for those in ne
+ ed throughout our community. D'Andre McBride is leading Shift 2 (10:00–
+ 11:30 AM) — contact him with any questions\, and register with the link
+ .\nSign up / details: https://registration.experientevent.com/showSTF26
+ 1?bkgId=2210&regGrpId=1036\nFlyer: https://northpointysa.com/img/posts/
+ service-million-meal-pack.jpg\nEverything\, always up to date: https://
+ northpointysa.com
+URL:https://registration.experientevent.com/showSTF261?bkgId=2210&regGrp
+ Id=1036
+CREATED:20260918T141142Z
+LAST-MODIFIED:20260918T141142Z
+SEQUENCE:0
+END:VEVENT
+END:VCALENDAR

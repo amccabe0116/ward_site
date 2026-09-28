@@ -1,0 +1,560 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//North Point YSA//northpointysa.com//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:North Point YSA
+X-WR-TIMEZONE:America/New_York
+X-PUBLISHED-TTL:PT1H
+REFRESH-INTERVAL;VALUE=DURATION:PT1H
+BEGIN:VEVENT
+UID:post-16@northpointysa.com
+DTSTAMP:20260926T030050Z
+DTSTART:20260921T230000Z
+DTEND:20260922T010000Z
+RRULE:FREQ=WEEKLY;BYDAY=MO
+SUMMARY:Temple Appreciation- Institute (Age 25+)
+LOCATION:Temple Annex- 6450 Barfield Rd SandySprings GA30328
+DESCRIPTION:Join us for institute\, ages 25+\nFlyer: https://utkbhlyvmfb
+ tjyfqeoze.supabase.co/storage/v1/object/public/flyers/uploads/e2b7bd0a-
+ 46b7-43ef-b42a-06004c3b9bb7.jpg\nEverything\, always up to date: https:
+ //northpointysa.com
+URL:https://northpointysa.com
+CREATED:20260920T174900Z
+LAST-MODIFIED:20260926T030050Z
+SEQUENCE:7751
+END:VEVENT
+BEGIN:VEVENT
+UID:post-1@northpointysa.com
+DTSTAMP:20260918T141142Z
+DTSTART:20260921T230000Z
+DTEND:20260922T010000Z
+SUMMARY:FHE: Karaoke and Chick-fil-A
+LOCATION:Roswell Stake Center\, 500 Norcross Street
+DESCRIPTION:Monday night FHE — karaoke\, with Chick-fil-A. See the flyer
+  for the whole September FHE schedule.\nFlyer: https://northpointysa.co
+ m/img/posts/fhe-september.jpg\nEverything\, always up to date: https://
+ northpointysa.com
+URL:https://northpointysa.com
+CREATED:20260918T141142Z
+LAST-MODIFIED:20260918T141142Z
+SEQUENCE:0
+END:VEVENT
+BEGIN:VEVENT
+UID:post-7@northpointysa.com
+DTSTAMP:20260926T030707Z
+DTSTART:20260922T230000Z
+DTEND:20260923T010000Z
+RRULE:FREQ=WEEKLY;BYDAY=TU
+SUMMARY:Institute "Connections" — Tuesdays
+LOCATION:Roswell Stake Center\, 500 Norcross Street
+DESCRIPTION:Come Follow Me for Young Adults (ages 18–35)\, every Tuesday
+ . 7:00 PM dinner\, 7:30 PM class. Bring a friend!\n• Connect with Chris
+ t.\n• Connect with others.\n• Connect with your purpose.\nMore online i
+ nstitute classes are at myinstitute.churchofjesuschrist.org\nSign up / 
+ details: https://myinstitute.churchofjesuschrist.org\nFlyer: https://ut
+ kbhlyvmfbtjyfqeoze.supabase.co/storage/v1/object/public/flyers/uploads/
+ 1a7c8f51-5713-4f07-8ce6-2e94abddad57.jpg\nEverything\, always up to dat
+ e: https://northpointysa.com
+URL:https://myinstitute.churchofjesuschrist.org
+CREATED:20260918T141142Z
+LAST-MODIFIED:20260926T030707Z
+SEQUENCE:10855
+END:VEVENT
+BEGIN:VEVENT
+UID:post-2@northpointysa.com
+DTSTAMP:20260918T141142Z
+DTSTART:20260923T230000Z
+DTEND:20260924T010000Z
+SUMMARY:Relief Society Activity: Cooking Class
+LOCATION:Small-group classes at various homes
+DESCRIPTION:Cooking classes in small groups at different locations. Sign
+  up for a group using the link — see the flyer for more.\nSign up / det
+ ails: https://docs.google.com/spreadsheets/d/1InH68DShDizmuoAjcQR3_yoRP
+ m0GI5Cb_Yy7kmIGRfQ/edit?usp=drivesdk\nFlyer: https://northpointysa.com/
+ img/posts/rs-cooking-class.jpg\nEverything\, always up to date: https:/
+ /northpointysa.com
+URL:https://docs.google.com/spreadsheets/d/1InH68DShDizmuoAjcQR3_yoRPm0G
+ I5Cb_Yy7kmIGRfQ/edit?usp=drivesdk
+CREATED:20260918T141142Z
+LAST-MODIFIED:20260918T141142Z
+SEQUENCE:0
+END:VEVENT
+BEGIN:VEVENT
+UID:post-3@northpointysa.com
+DTSTAMP:20260918T141142Z
+DTSTART:20260926T140000Z
+DTEND:20260926T153000Z
+SUMMARY:Ward Service Project: Million Meal Pack
+LOCATION:State Farm Arena
+DESCRIPTION:As disciples of Christ\, we're called to serve. Let's show u
+ p\, show out\, and make an impact by helping pack meals for those in ne
+ ed throughout our community. D'Andre McBride is leading Shift 2 (10:00–
+ 11:30 AM) — contact him with any questions\, and register with the link
+ .\nSign up / details: https://registration.experientevent.com/showSTF26
+ 1?bkgId=2210&regGrpId=1036\nFlyer: https://northpointysa.com/img/posts/
+ service-million-meal-pack.jpg\nEverything\, always up to date: https://
+ northpointysa.com
+URL:https://registration.experientevent.com/showSTF261?bkgId=2210&regGrp
+ Id=1036
+CREATED:20260918T141142Z
+LAST-MODIFIED:20260918T141142Z
+SEQUENCE:0
+END:VEVENT
+BEGIN:VEVENT
+UID:post-4@northpointysa.com
+DTSTAMP:20260918T141142Z
+DTSTART:20260926T220000Z
+DTEND:20260927T010000Z
+SUMMARY:Fall Festival
+LOCATION:Paula & Mike Bothwell's home\, 1040 Wilson Glen Dr.\, Roswell
+DESCRIPTION:Street tacos\, games\, community. See the flyer for details.
+ \nFlyer: https://northpointysa.com/img/posts/fall-festival.jpg\nEveryth
+ ing\, always up to date: https://northpointysa.com
+URL:https://northpointysa.com
+CREATED:20260918T141142Z
+LAST-MODIFIED:20260918T141142Z
+SEQUENCE:0
+END:VEVENT
+BEGIN:VEVENT
+UID:post-15@northpointysa.com
+DTSTAMP:20260920T151525Z
+DTSTART:20260926T230000Z
+DTEND:20260927T023000Z
+SUMMARY:YSA Dance
+LOCATION:5055 HOLT ROAD ACWORTH\, GA
+DESCRIPTION:The Kennesaw branch has invited us to this dance! It officia
+ lly starts at 7pm next Saturday. Come for a good time!!\nFlyer: https:/
+ /utkbhlyvmfbtjyfqeoze.supabase.co/storage/v1/object/public/flyers/uploa
+ ds/04b51553-d3ff-4cc1-ab6c-3b91882730be.jpg\nEverything\, always up to 
+ date: https://northpointysa.com
+URL:https://northpointysa.com
+CREATED:20260920T151430Z
+LAST-MODIFIED:20260920T151525Z
+SEQUENCE:0
+END:VEVENT
+BEGIN:VEVENT
+UID:post-5@northpointysa.com
+DTSTAMP:20260918T141142Z
+DTSTART:20260928T230000Z
+DTEND:20260929T010000Z
+SUMMARY:FHE: Kickball at Abernathy Greenway
+LOCATION:Abernathy Greenway Park
+DESCRIPTION:Kickball\, with pizza\, fruit and chips. A GPS pin for where
+  we're meeting in the park goes out in the WhatsApp the weekend before.
+ \nFlyer: https://northpointysa.com/img/posts/fhe-september.jpg\nEveryth
+ ing\, always up to date: https://northpointysa.com
+URL:https://northpointysa.com
+CREATED:20260918T141142Z
+LAST-MODIFIED:20260918T141142Z
+SEQUENCE:0
+END:VEVENT
+BEGIN:VEVENT
+UID:post-35@northpointysa.com
+DTSTAMP:20260927T164529Z
+DTSTART:20261003T130000Z
+DTEND:20261003T150000Z
+SUMMARY:Building cleaning
+LOCATION:Roswell Stake Center\, 500 Norcross Street
+DESCRIPTION:Help clean our building — about an hour\, 6 of us wanted. Pu
+ t your name down (or someone you asked): https://northpointysa.com/clea
+ ning.html\nSign up / details: https://northpointysa.com/cleaning.html\n
+ Everything\, always up to date: https://northpointysa.com
+URL:https://northpointysa.com/cleaning.html
+CREATED:20260927T164529Z
+LAST-MODIFIED:20260927T164529Z
+SEQUENCE:0
+END:VEVENT
+BEGIN:VEVENT
+UID:post-19@northpointysa.com
+DTSTAMP:20260927T035918Z
+DTSTART:20261003T160000Z
+DTEND:20261003T220000Z
+SUMMARY:General Conference
+DESCRIPTION:Saturday and Sunday\, October 3–4. Sessions at 12:00 PM and 
+ 4:00 PM Eastern both days (10 AM and 2 PM Mountain). Watch live on Chur
+ chofJesusChrist.org\, the Gospel Library app or YouTube — recordings ar
+ e up right after each session. No regular Sunday meetings on conference
+  weekend\, so get together and watch with friends.\nSign up / details: 
+ https://conference.churchofjesuschrist.org\nFlyer: https://utkbhlyvmfbt
+ jyfqeoze.supabase.co/storage/v1/object/public/flyers/uploads/8cb5be3c-c
+ 96c-4946-94af-793d8e2c5f9c.jpg\nEverything\, always up to date: https:/
+ /northpointysa.com
+URL:https://conference.churchofjesuschrist.org
+CREATED:20260927T025844Z
+LAST-MODIFIED:20260927T035918Z
+SEQUENCE:60
+END:VEVENT
+BEGIN:VEVENT
+UID:post-36@northpointysa.com
+DTSTAMP:20260927T164532Z
+DTSTART:20261010T130000Z
+DTEND:20261010T150000Z
+SUMMARY:Building cleaning
+LOCATION:Roswell Stake Center\, 500 Norcross Street
+DESCRIPTION:Help clean our building — about an hour\, 6 of us wanted. Pu
+ t your name down (or someone you asked): https://northpointysa.com/clea
+ ning.html\nSign up / details: https://northpointysa.com/cleaning.html\n
+ Everything\, always up to date: https://northpointysa.com
+URL:https://northpointysa.com/cleaning.html
+CREATED:20260927T164532Z
+LAST-MODIFIED:20260927T164532Z
+SEQUENCE:0
+END:VEVENT
+BEGIN:VEVENT
+UID:post-6@northpointysa.com
+DTSTAMP:20260927T040421Z
+DTSTART:20261011T230000Z
+DTEND:20261012T000000Z
+SUMMARY:Stake General Priesthood Meeting
+LOCATION:Roswell Stake Center
+DESCRIPTION:For the men of the ward — please plan to attend.\nFlyer: htt
+ ps://utkbhlyvmfbtjyfqeoze.supabase.co/storage/v1/object/public/flyers/u
+ ploads/ebe30c0b-d98e-4a1a-86c3-395b9e65a47f.jpg\nEverything\, always up
+  to date: https://northpointysa.com
+URL:https://northpointysa.com
+CREATED:20260918T141142Z
+LAST-MODIFIED:20260927T040421Z
+SEQUENCE:12352
+END:VEVENT
+BEGIN:VEVENT
+UID:post-34@northpointysa.com
+DTSTAMP:20260927T150122Z
+DTSTART:20261016T223000Z
+DTEND:20261017T035900Z
+SUMMARY:Hulacoween
+LOCATION:Hulaco Youth & Family Camp (Baileyton\, AL)
+DESCRIPTION:HELLO NORTH POINT YSA!\nHuntsville & Birmingham AL YSAs are 
+ holding another annual Hulacoween Fri\, Oct 16 - Sat\, Oct 17 @ Camp Hu
+ laco.\nWe’d love to have y’all join us for this event 🎃\n\nYou MUST RS
+ VP by Mon\, Oct 12 (esp if you want food & a place to sleep).\n\n*If po
+ ssible\, please announce this event during your announcements at church
+ *\nSee you there 🙂\nSign up / details: https://forms.gle/mqRe4vKbNp3mW
+ wUf8\nFlyer: https://utkbhlyvmfbtjyfqeoze.supabase.co/storage/v1/object
+ /public/flyers/uploads/b2ef4e0d-d49f-4055-8e2f-c531c9a8ef27.jpg\nEveryt
+ hing\, always up to date: https://northpointysa.com
+URL:https://forms.gle/mqRe4vKbNp3mWwUf8
+CREATED:20260927T145713Z
+LAST-MODIFIED:20260927T150122Z
+SEQUENCE:4
+END:VEVENT
+BEGIN:VEVENT
+UID:post-37@northpointysa.com
+DTSTAMP:20260927T171104Z
+DTSTART:20261017T130000Z
+DTEND:20261017T150000Z
+SUMMARY:Building cleaning
+LOCATION:Roswell Stake Center\, 500 Norcross Street
+DESCRIPTION:Help clean our building — about an hour\, 6 of us wanted. Pu
+ t your name down (or someone you asked): https://northpointysa.com/clea
+ ning.html\nSign up / details: https://northpointysa.com/cleaning.html\n
+ Everything\, always up to date: https://northpointysa.com
+URL:https://northpointysa.com/cleaning.html
+CREATED:20260927T171104Z
+LAST-MODIFIED:20260927T171104Z
+SEQUENCE:0
+END:VEVENT
+BEGIN:VEVENT
+UID:post-32@northpointysa.com
+DTSTAMP:20260927T041444Z
+DTSTART;VALUE=DATE:20261019
+DTEND;VALUE=DATE:20261020
+SUMMARY:Atlanta Temple closed for maintenance
+LOCATION:Atlanta Georgia Temple
+DESCRIPTION:The Atlanta Temple is closed for its regular maintenance and
+  cleaning from Monday\, October 19 through Monday\, November 2. Get you
+ r temple trips in before the 19th\, or plan for after it reopens.\nEver
+ ything\, always up to date: https://northpointysa.com
+URL:https://northpointysa.com
+CREATED:20260927T041444Z
+LAST-MODIFIED:20260927T041444Z
+SEQUENCE:0
+END:VEVENT
+BEGIN:VEVENT
+UID:post-18@northpointysa.com
+DTSTAMP:20260926T025346Z
+DTSTART:20261024T223000Z
+DTEND:20261025T023000Z
+SUMMARY:North Point YSA Ward Halloween Party
+LOCATION:14680 Wood Rd Milton\, GA 30004
+DESCRIPTION:6:30-8:00pm contest and activities\nDonut on a string\nApple
+  Bobbing\nBonfire and S’mores\nAxe throwing\nHay ride\nPhoto Booth\nMoc
+ ktail Bar\nDesert Contest\nCostume Contest (have a red carpet)\n\n(Doin
+ g guide for living dead and if get 5 stamps/stickers from doing an acti
+ vity get a prize)\n\nAfter announcing winners will take group photo on 
+ dance floor\n\n8:00-10:30 dance with activities on going\nFlyer: https:
+ //utkbhlyvmfbtjyfqeoze.supabase.co/storage/v1/object/public/flyers/uplo
+ ads/079f5b65-cb67-421d-812c-32a188675a9e.jpg\nEverything\, always up to
+  date: https://northpointysa.com
+URL:https://northpointysa.com
+CREATED:20260925T000525Z
+LAST-MODIFIED:20260926T025346Z
+SEQUENCE:1608
+END:VEVENT
+BEGIN:VEVENT
+UID:post-14@northpointysa.com
+DTSTAMP:20260926T031517Z
+DTSTART:20261025T230000Z
+DTEND:20261026T000000Z
+RRULE:FREQ=WEEKLY;BYDAY=SU;UNTIL=20261116T045900Z
+SUMMARY:Stake Conference Choir - Invitation
+LOCATION:Roswell Stake Center\, 500 Norcross Street
+DESCRIPTION:Rehearsals: Four 1-hour practices on Sunday evenings—October
+  25\, November 1\, November 8\, and November 15—from 7:00 pm to 8:00 pm
+  in the Roswell Stake Center chapel.\n\nPerformance: Sunday\, November 
+ 22 at 10:00am General Session (Choir gathers at 9:15 am in the Relief S
+ ociety Room). Sheet music and practice tracks will be provided in advan
+ ce.\n\nInstrumentalists & Accompanists: If you play an instrument\, pia
+ no\, or organ and are interested in accompanying the choir or offering 
+ prelude\, postlude\, or special numbers\, we would love to have your ta
+ lents.\n\nPlease take a moment to register at the link below so Camiah 
+ and the music committee can prepare adequate sheet music and seating:\n
+ Sign up / details: https://forms.gle/Ht1tdQE3R5khzroC9\nFlyer: https://
+ utkbhlyvmfbtjyfqeoze.supabase.co/storage/v1/object/public/flyers/upload
+ s/aae7b291-65df-4ca2-861b-d71580f003ad.jpg\nEverything\, always up to d
+ ate: https://northpointysa.com
+URL:https://forms.gle/Ht1tdQE3R5khzroC9
+CREATED:20260920T025122Z
+LAST-MODIFIED:20260926T031517Z
+SEQUENCE:8663
+END:VEVENT
+BEGIN:VEVENT
+UID:post-17@northpointysa.com
+DTSTAMP:20260926T024647Z
+DTSTART:20261031T230000Z
+DTEND:20261101T030000Z
+SUMMARY:Till Death Do Us Part Halloween Party
+LOCATION:1275 Flat Shoals Rd SE Conyers\, GA  30013
+DESCRIPTION:DJ and Dancing\, Costume Contest\, Photo Booth\,  Mocktail B
+ ar\, Treats\, Games\, and A Fun Time\nSign up / details: https://docs.g
+ oogle.com/forms/d/e/1FAIpQLSc-Xs_NcHely6ppnSjNpUvJxUFYwozlHLGe41ANTey9x
+ iZxog/viewform\nFlyer: https://utkbhlyvmfbtjyfqeoze.supabase.co/storage
+ /v1/object/public/flyers/uploads/c323fb5d-6c6d-41a3-8149-908575f385ac.j
+ pg\nEverything\, always up to date: https://northpointysa.com
+URL:https://docs.google.com/forms/d/e/1FAIpQLSc-Xs_NcHely6ppnSjNpUvJxUFY
+ wozlHLGe41ANTey9xiZxog/viewform
+CREATED:20260924T101737Z
+LAST-MODIFIED:20260926T024647Z
+SEQUENCE:2429
+END:VEVENT
+BEGIN:VEVENT
+UID:post-20@northpointysa.com
+DTSTAMP:20260927T040142Z
+DTSTART:20261102T010000Z
+DTEND:20261102T020000Z
+SUMMARY:Worldwide Devotional for Young Adults
+DESCRIPTION:Church leaders speak to young adults (18–35) around the worl
+ d — counsel meant especially for us. 8:00 PM Eastern (6:00 PM Mountain)
+ \, about an hour. Watch live on ChurchofJesusChrist.org or the Gospel L
+ ibrary app\, or gather with friends to watch it together.\nfeaturing: E
+ lder Quentin L. Cook\nSign up / details: https://events.churchofjesusch
+ rist.org\nFlyer: https://utkbhlyvmfbtjyfqeoze.supabase.co/storage/v1/ob
+ ject/public/flyers/uploads/94ad03c2-6339-48dd-89c1-ac05a5db0370.jpg\nEv
+ erything\, always up to date: https://northpointysa.com
+URL:https://events.churchofjesuschrist.org
+CREATED:20260927T025844Z
+LAST-MODIFIED:20260927T040142Z
+SEQUENCE:62
+END:VEVENT
+BEGIN:VEVENT
+UID:post-33@northpointysa.com
+DTSTAMP:20260927T041444Z
+DTSTART;VALUE=DATE:20261103
+DTEND;VALUE=DATE:20261104
+SUMMARY:Atlanta Temple reopens
+LOCATION:Atlanta Georgia Temple
+DESCRIPTION:The Atlanta Temple is back open after its two-week maintenan
+ ce closure (October 19 – November 2). Time to book appointments again.\
+ nEverything\, always up to date: https://northpointysa.com
+URL:https://northpointysa.com
+CREATED:20260927T041444Z
+LAST-MODIFIED:20260927T041444Z
+SEQUENCE:0
+END:VEVENT
+BEGIN:VEVENT
+UID:post-21@northpointysa.com
+DTSTAMP:20260927T035530Z
+DTSTART;VALUE=DATE:20261205
+DTEND;VALUE=DATE:20261206
+SUMMARY:North Point YSA Ward Christmas Party
+LOCATION:Roswell Stake Center\, 500 Norcross Street
+DESCRIPTION:North Point Ward Christmas party — food\, folks and fun! Bri
+ ng your friends. Time and details coming.\nEverything\, always up to da
+ te: https://northpointysa.com
+URL:https://northpointysa.com
+CREATED:20260927T025844Z
+LAST-MODIFIED:20260927T035530Z
+SEQUENCE:56
+END:VEVENT
+BEGIN:VEVENT
+UID:post-22@northpointysa.com
+DTSTAMP:20260927T025844Z
+DTSTART;VALUE=DATE:20261206
+DTEND;VALUE=DATE:20261207
+SUMMARY:First Presidency’s Christmas Devotional
+DESCRIPTION:The First Presidency’s Christmas devotional opens the Christ
+ mas season with messages and music about the birth of Jesus Christ. Wat
+ ch on ChurchofJesusChrist.org or the Gospel Library app — time to be an
+ nounced\, and it stays available afterward.\nSign up / details: https:/
+ /events.churchofjesuschrist.org\nEverything\, always up to date: https:
+ //northpointysa.com
+URL:https://events.churchofjesuschrist.org
+CREATED:20260927T025844Z
+LAST-MODIFIED:20260927T025844Z
+SEQUENCE:0
+END:VEVENT
+BEGIN:VEVENT
+UID:post-23@northpointysa.com
+DTSTAMP:20260927T025844Z
+DTSTART;VALUE=DATE:20261220
+DTEND;VALUE=DATE:20261221
+SUMMARY:Christmas Sunday: one-hour sacrament meeting
+DESCRIPTION:The Sunday before Christmas is a special one-hour sacrament 
+ meeting focused on the birth of the Savior — talks and music centered o
+ n Christ\, and no second-hour classes. Everyone’s welcome\, so bring fr
+ iends or family who are in town.\nEverything\, always up to date: https
+ ://northpointysa.com
+URL:https://northpointysa.com
+CREATED:20260927T025844Z
+LAST-MODIFIED:20260927T025844Z
+SEQUENCE:0
+END:VEVENT
+BEGIN:VEVENT
+UID:post-24@northpointysa.com
+DTSTAMP:20260927T025844Z
+DTSTART:20270208T010000Z
+DTEND:20270208T020000Z
+SUMMARY:Worldwide Devotional for Young Adults
+DESCRIPTION:Elder Ronald A. Rasband of the Quorum of the Twelve speaks t
+ o young adults (18–35) around the world. 8:00 PM Eastern (6:00 PM Mount
+ ain)\, about an hour. Watch live on ChurchofJesusChrist.org or the Gosp
+ el Library app\, or gather with friends to watch it together.\nSign up 
+ / details: https://events.churchofjesuschrist.org\nEverything\, always 
+ up to date: https://northpointysa.com
+URL:https://events.churchofjesuschrist.org
+CREATED:20260927T025844Z
+LAST-MODIFIED:20260927T025844Z
+SEQUENCE:0
+END:VEVENT
+BEGIN:VEVENT
+UID:post-25@northpointysa.com
+DTSTAMP:20260927T025844Z
+DTSTART;VALUE=DATE:20270328
+DTEND;VALUE=DATE:20270329
+SUMMARY:Easter Sunday
+DESCRIPTION:Holy Week runs from Palm Sunday\, March 21\, to Easter Sunda
+ y\, March 28. Easter Sunday is a special sacrament meeting with talks a
+ nd music focused on the Savior\, and no second-hour classes — a great S
+ unday to invite friends and family. Holy Week resources at Easter.Churc
+ hofJesusChrist.org.\nSign up / details: https://easter.churchofjesuschr
+ ist.org\nEverything\, always up to date: https://northpointysa.com
+URL:https://easter.churchofjesuschrist.org
+CREATED:20260927T025844Z
+LAST-MODIFIED:20260927T025844Z
+SEQUENCE:0
+END:VEVENT
+BEGIN:VEVENT
+UID:post-26@northpointysa.com
+DTSTAMP:20260927T025844Z
+DTSTART:20270403T160000Z
+DTEND:20270403T220000Z
+SUMMARY:General Conference
+DESCRIPTION:Saturday and Sunday\, April 3–4. Sessions at 12:00 PM and 4:
+ 00 PM Eastern both days (10 AM and 2 PM Mountain). Watch live on Church
+ ofJesusChrist.org\, the Gospel Library app or YouTube — recordings are 
+ up right after each session. No regular Sunday meetings on conference w
+ eekend\, so get together and watch with friends.\nSign up / details: ht
+ tps://conference.churchofjesuschrist.org\nEverything\, always up to dat
+ e: https://northpointysa.com
+URL:https://conference.churchofjesuschrist.org
+CREATED:20260927T025844Z
+LAST-MODIFIED:20260927T025844Z
+SEQUENCE:0
+END:VEVENT
+BEGIN:VEVENT
+UID:post-27@northpointysa.com
+DTSTAMP:20260927T025845Z
+DTSTART;VALUE=DATE:20270405
+DTEND;VALUE=DATE:20270406
+SUMMARY:Salt Lake Temple Celebration begins
+DESCRIPTION:April 5 through October 1\, 2027: the renovated Salt Lake Te
+ mple opens for tours — in person on Temple Square and virtually — ahead
+  of its rededication. An opening event with music and performances stre
+ ams the first weekend (April 9–10). Details at TempleSquare.org.\nSign 
+ up / details: https://www.templesquare.org\nEverything\, always up to d
+ ate: https://northpointysa.com
+URL:https://www.templesquare.org
+CREATED:20260927T025845Z
+LAST-MODIFIED:20260927T025845Z
+SEQUENCE:0
+END:VEVENT
+BEGIN:VEVENT
+UID:post-28@northpointysa.com
+DTSTAMP:20260927T025845Z
+DTSTART:20270503T000000Z
+DTEND:20270503T010000Z
+SUMMARY:Worldwide Devotional for Young Adults
+DESCRIPTION:A member of the Quorum of the Twelve speaks to young adults 
+ (18–35) around the world. 8:00 PM Eastern (6:00 PM Mountain)\, about an
+  hour. Watch live on ChurchofJesusChrist.org or the Gospel Library app\
+ , or gather with friends to watch it together.\nSign up / details: http
+ s://events.churchofjesuschrist.org\nEverything\, always up to date: htt
+ ps://northpointysa.com
+URL:https://events.churchofjesuschrist.org
+CREATED:20260927T025845Z
+LAST-MODIFIED:20260927T025845Z
+SEQUENCE:0
+END:VEVENT
+BEGIN:VEVENT
+UID:post-29@northpointysa.com
+DTSTAMP:20260927T025845Z
+DTSTART:20271002T160000Z
+DTEND:20271002T220000Z
+SUMMARY:General Conference
+DESCRIPTION:Saturday and Sunday\, October 2–3. Sessions at 12:00 PM and 
+ 4:00 PM Eastern both days (10 AM and 2 PM Mountain). Watch live on Chur
+ chofJesusChrist.org\, the Gospel Library app or YouTube — recordings ar
+ e up right after each session. No regular Sunday meetings on conference
+  weekend\, so get together and watch with friends.\nSign up / details: 
+ https://conference.churchofjesuschrist.org\nEverything\, always up to d
+ ate: https://northpointysa.com
+URL:https://conference.churchofjesuschrist.org
+CREATED:20260927T025845Z
+LAST-MODIFIED:20260927T025845Z
+SEQUENCE:0
+END:VEVENT
+BEGIN:VEVENT
+UID:post-30@northpointysa.com
+DTSTAMP:20260927T025845Z
+DTSTART:20271108T010000Z
+DTEND:20271108T020000Z
+SUMMARY:Worldwide Devotional for Young Adults
+DESCRIPTION:A member of the Quorum of the Twelve speaks to young adults 
+ (18–35) around the world. 8:00 PM Eastern (6:00 PM Mountain)\, about an
+  hour. Watch live on ChurchofJesusChrist.org or the Gospel Library app\
+ , or gather with friends to watch it together.\nSign up / details: http
+ s://events.churchofjesuschrist.org\nEverything\, always up to date: htt
+ ps://northpointysa.com
+URL:https://events.churchofjesuschrist.org
+CREATED:20260927T025845Z
+LAST-MODIFIED:20260927T025845Z
+SEQUENCE:0
+END:VEVENT
+BEGIN:VEVENT
+UID:post-31@northpointysa.com
+DTSTAMP:20260927T025845Z
+DTSTART;VALUE=DATE:20271205
+DTEND;VALUE=DATE:20271206
+SUMMARY:First Presidency’s Christmas Devotional
+DESCRIPTION:The First Presidency’s Christmas devotional opens the Christ
+ mas season with messages and music about the birth of Jesus Christ. Wat
+ ch on ChurchofJesusChrist.org or the Gospel Library app — time to be an
+ nounced\, and it stays available afterward.\nSign up / details: https:/
+ /events.churchofjesuschrist.org\nEverything\, always up to date: https:
+ //northpointysa.com
+URL:https://events.churchofjesuschrist.org
+CREATED:20260927T025845Z
+LAST-MODIFIED:20260927T025845Z
+SEQUENCE:0
+END:VEVENT
+END:VCALENDAR

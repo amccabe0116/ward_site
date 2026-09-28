@@ -1,0 +1,29 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//North Point YSA//northpointysa.com//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Relief Society Activity: Cooking Class
+X-WR-TIMEZONE:America/New_York
+X-PUBLISHED-TTL:PT1H
+REFRESH-INTERVAL;VALUE=DURATION:PT1H
+BEGIN:VEVENT
+UID:post-2@northpointysa.com
+DTSTAMP:20260918T141142Z
+DTSTART:20260923T230000Z
+DTEND:20260924T010000Z
+SUMMARY:Relief Society Activity: Cooking Class
+LOCATION:Small-group classes at various homes
+DESCRIPTION:Cooking classes in small groups at different locations. Sign
+  up for a group using the link — see the flyer for more.\nSign up / det
+ ails: https://docs.google.com/spreadsheets/d/1InH68DShDizmuoAjcQR3_yoRP
+ m0GI5Cb_Yy7kmIGRfQ/edit?usp=drivesdk\nFlyer: https://northpointysa.com/
+ img/posts/rs-cooking-class.jpg\nEverything\, always up to date: https:/
+ /northpointysa.com
+URL:https://docs.google.com/spreadsheets/d/1InH68DShDizmuoAjcQR3_yoRPm0G
+ I5Cb_Yy7kmIGRfQ/edit?usp=drivesdk
+CREATED:20260918T141142Z
+LAST-MODIFIED:20260918T141142Z
+SEQUENCE:0
+END:VEVENT
+END:VCALENDAR

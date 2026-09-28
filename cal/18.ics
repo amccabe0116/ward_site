@@ -1,0 +1,31 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//North Point YSA//northpointysa.com//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:North Point YSA Ward Halloween Party
+X-WR-TIMEZONE:America/New_York
+X-PUBLISHED-TTL:PT1H
+REFRESH-INTERVAL;VALUE=DURATION:PT1H
+BEGIN:VEVENT
+UID:post-18@northpointysa.com
+DTSTAMP:20260926T025346Z
+DTSTART:20261024T223000Z
+DTEND:20261025T023000Z
+SUMMARY:North Point YSA Ward Halloween Party
+LOCATION:14680 Wood Rd Milton\, GA 30004
+DESCRIPTION:6:30-8:00pm contest and activities\nDonut on a string\nApple
+  Bobbing\nBonfire and S’mores\nAxe throwing\nHay ride\nPhoto Booth\nMoc
+ ktail Bar\nDesert Contest\nCostume Contest (have a red carpet)\n\n(Doin
+ g guide for living dead and if get 5 stamps/stickers from doing an acti
+ vity get a prize)\n\nAfter announcing winners will take group photo on 
+ dance floor\n\n8:00-10:30 dance with activities on going\nFlyer: https:
+ //utkbhlyvmfbtjyfqeoze.supabase.co/storage/v1/object/public/flyers/uplo
+ ads/079f5b65-cb67-421d-812c-32a188675a9e.jpg\nEverything\, always up to
+  date: https://northpointysa.com
+URL:https://northpointysa.com
+CREATED:20260925T000525Z
+LAST-MODIFIED:20260926T025346Z
+SEQUENCE:1608
+END:VEVENT
+END:VCALENDAR

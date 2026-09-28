@@ -1,0 +1,30 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//North Point YSA//northpointysa.com//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:General Conference
+X-WR-TIMEZONE:America/New_York
+X-PUBLISHED-TTL:PT1H
+REFRESH-INTERVAL;VALUE=DURATION:PT1H
+BEGIN:VEVENT
+UID:post-19@northpointysa.com
+DTSTAMP:20260927T035918Z
+DTSTART:20261003T160000Z
+DTEND:20261003T220000Z
+SUMMARY:General Conference
+DESCRIPTION:Saturday and Sunday\, October 3–4. Sessions at 12:00 PM and 
+ 4:00 PM Eastern both days (10 AM and 2 PM Mountain). Watch live on Chur
+ chofJesusChrist.org\, the Gospel Library app or YouTube — recordings ar
+ e up right after each session. No regular Sunday meetings on conference
+  weekend\, so get together and watch with friends.\nSign up / details: 
+ https://conference.churchofjesuschrist.org\nFlyer: https://utkbhlyvmfbt
+ jyfqeoze.supabase.co/storage/v1/object/public/flyers/uploads/8cb5be3c-c
+ 96c-4946-94af-793d8e2c5f9c.jpg\nEverything\, always up to date: https:/
+ /northpointysa.com
+URL:https://conference.churchofjesuschrist.org
+CREATED:20260927T025844Z
+LAST-MODIFIED:20260927T035918Z
+SEQUENCE:60
+END:VEVENT
+END:VCALENDAR

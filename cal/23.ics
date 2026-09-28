@@ -1,0 +1,26 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//North Point YSA//northpointysa.com//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Christmas Sunday: one-hour sacrament meeting
+X-WR-TIMEZONE:America/New_York
+X-PUBLISHED-TTL:PT1H
+REFRESH-INTERVAL;VALUE=DURATION:PT1H
+BEGIN:VEVENT
+UID:post-23@northpointysa.com
+DTSTAMP:20260927T025844Z
+DTSTART;VALUE=DATE:20261220
+DTEND;VALUE=DATE:20261221
+SUMMARY:Christmas Sunday: one-hour sacrament meeting
+DESCRIPTION:The Sunday before Christmas is a special one-hour sacrament 
+ meeting focused on the birth of the Savior — talks and music centered o
+ n Christ\, and no second-hour classes. Everyone’s welcome\, so bring fr
+ iends or family who are in town.\nEverything\, always up to date: https
+ ://northpointysa.com
+URL:https://northpointysa.com
+CREATED:20260927T025844Z
+LAST-MODIFIED:20260927T025844Z
+SEQUENCE:0
+END:VEVENT
+END:VCALENDAR

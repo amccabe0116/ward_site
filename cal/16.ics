@@ -1,0 +1,27 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//North Point YSA//northpointysa.com//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Temple Appreciation- Institute (Age 25+)
+X-WR-TIMEZONE:America/New_York
+X-PUBLISHED-TTL:PT1H
+REFRESH-INTERVAL;VALUE=DURATION:PT1H
+BEGIN:VEVENT
+UID:post-16@northpointysa.com
+DTSTAMP:20260926T030050Z
+DTSTART:20260921T230000Z
+DTEND:20260922T010000Z
+RRULE:FREQ=WEEKLY;BYDAY=MO
+SUMMARY:Temple Appreciation- Institute (Age 25+)
+LOCATION:Temple Annex- 6450 Barfield Rd SandySprings GA30328
+DESCRIPTION:Join us for institute\, ages 25+\nFlyer: https://utkbhlyvmfb
+ tjyfqeoze.supabase.co/storage/v1/object/public/flyers/uploads/e2b7bd0a-
+ 46b7-43ef-b42a-06004c3b9bb7.jpg\nEverything\, always up to date: https:
+ //northpointysa.com
+URL:https://northpointysa.com
+CREATED:20260920T174900Z
+LAST-MODIFIED:20260926T030050Z
+SEQUENCE:7751
+END:VEVENT
+END:VCALENDAR

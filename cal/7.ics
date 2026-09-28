@@ -1,0 +1,31 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//North Point YSA//northpointysa.com//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Institute "Connections" — Tuesdays
+X-WR-TIMEZONE:America/New_York
+X-PUBLISHED-TTL:PT1H
+REFRESH-INTERVAL;VALUE=DURATION:PT1H
+BEGIN:VEVENT
+UID:post-7@northpointysa.com
+DTSTAMP:20260926T030707Z
+DTSTART:20260922T230000Z
+DTEND:20260923T010000Z
+RRULE:FREQ=WEEKLY;BYDAY=TU
+SUMMARY:Institute "Connections" — Tuesdays
+LOCATION:Roswell Stake Center\, 500 Norcross Street
+DESCRIPTION:Come Follow Me for Young Adults (ages 18–35)\, every Tuesday
+ . 7:00 PM dinner\, 7:30 PM class. Bring a friend!\n• Connect with Chris
+ t.\n• Connect with others.\n• Connect with your purpose.\nMore online i
+ nstitute classes are at myinstitute.churchofjesuschrist.org\nSign up / 
+ details: https://myinstitute.churchofjesuschrist.org\nFlyer: https://ut
+ kbhlyvmfbtjyfqeoze.supabase.co/storage/v1/object/public/flyers/uploads/
+ 1a7c8f51-5713-4f07-8ce6-2e94abddad57.jpg\nEverything\, always up to dat
+ e: https://northpointysa.com
+URL:https://myinstitute.churchofjesuschrist.org
+CREATED:20260918T141142Z
+LAST-MODIFIED:20260926T030707Z
+SEQUENCE:10855
+END:VEVENT
+END:VCALENDAR

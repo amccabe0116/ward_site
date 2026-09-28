@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Feed the missionaries</title>
+  <meta name="description" content="Take the ward's missionaries out to eat — pick a companionship and a day.">
+  <meta name="theme-color" content="#1b2a41">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%231b2a41'/><text x='50' y='68' font-size='52' text-anchor='middle' fill='%23e2c377' font-family='Georgia'>N</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="app.css?v=18">
+</head>
+<body>
+  <!-- Missionary meals (supabase/meals.sql): whatever companionships the ward has configured
+       (Leaders › Settings › Meal companionships — Elders, Sisters, however many of each), each
+       with a calendar of the next few weeks; one meal per companionship per day. A brother
+       feeding sister missionaries names the sister coming along; each companionship eats inside
+       its own area. Labels, areas, phones and the switch live on Leaders › Settings. -->
+  <header class="hero compact">
+    <a class="back" href="index.html">‹ Home</a>
+    <p class="eyebrow" id="eyebrow">Ward</p>
+    <h1>Feed the missionaries</h1>
+    <p class="date">Pick a companionship and a day, then text them to settle the time and place.</p>
+  </header>
+
+  <main class="wrap" id="main" hidden>
+    <p class="lede">Taking the missionaries out to eat is one of the easiest ways to help the work along — and it’s a good time. Pick a companionship below, then an open day. Once you’re booked you’ll get their number.</p>
+    <div class="card meals-rules">
+      <div class="rule" id="rule-brothers"><b>Brothers:</b> to take the sisters out, bring a sister along — put her name in the form.</div>
+      <div class="rule" id="rule-areas"><b>Sisters eat in their own area:</b> <span id="areas"></span></div>
+      <div class="rule"><b>Coordinate with the sisters:</b> booking a day here holds it — you still need to text them to settle the time and place, and they’ll confirm it fits their schedule. You get their number as soon as you book.</div>
+    </div>
+    <div class="chips" id="comps"></div>
+    <p class="muted small" id="comp-area"></p>
+    <div id="cal"></div>
+  </main>
+
+  <main class="wrap" id="closed" hidden>
+    <div class="card" style="text-align:center;padding:28px 20px">
+      <h2 style="margin:0 0 8px">Meal sign-ups are closed right now</h2>
+      <p class="muted" style="margin:0 0 16px">Watch the announcements — they’ll open again soon.</p>
+      <a class="btn secondary" href="index.html" style="text-decoration:none">Back to the home page</a>
+    </div>
+  </main>
+
+  <!-- the booking sheet for one day -->
+  <div class="signup-sheet" id="sheet" hidden>
+    <div class="signup-card">
+      <h2 id="sheet-title">Book a meal</h2>
+      <p class="muted" id="sheet-sub"></p>
+      <div class="field"><label for="name">Your name</label><input id="name" type="text" maxlength="80" autocomplete="name"></div>
+      <div class="inline wrap2">
+        <div class="field"><label for="gender">I’m a</label><select id="gender"><option value="">Choose…</option><option value="M">Brother</option><option value="F">Sister</option></select></div>
+        <div class="field" style="flex:1"><label for="phone">Mobile number</label><input id="phone" type="tel" maxlength="40" autocomplete="tel" inputmode="tel"></div>
+      </div>
+      <div class="field" id="companion-field" hidden><label for="companion">Sister coming along <span class="opt">(needed when a brother feeds the sisters)</span></label><input id="companion" type="text" maxlength="80" placeholder="Her name"></div>
+      <div class="field"><label for="notes">Anything they should know? <span class="opt">(optional)</span></label><input id="notes" type="text" maxlength="600" placeholder="Bringing two friends, lunch not dinner, …"></div>
+      <div style="position:absolute;left:-9999px;top:-9999px" aria-hidden="true"><input id="website" type="text" tabindex="-1" autocomplete="off" placeholder="Leave this empty"></div>
+      <div class="notice error" id="error" hidden></div>
+      <div class="actionbar">
+        <button class="btn" id="send">Book it</button>
+        <button class="btn secondary" id="cancel" type="button">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="app.js?v=4"></script>
+  <script>
+    (function () {
+      const { rpc, el, icons } = NP;
+      const $ = id => document.getElementById(id);
+      $('eyebrow').textContent = NP.C.wardName || 'Ward';
+      document.title = 'Feed the missionaries · ' + (NP.C.wardName || 'Ward');
+      const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'], MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+      const todayIso = new Intl.DateTimeFormat('en-CA', { timeZone: NP.C.timeZone }).format(new Date());
+      const iso = (y, m, d) => `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+      const parts = s => { const [y, m, d] = s.split('-').map(Number); return { y, m, d, dow: new Date(Date.UTC(y, m - 1, d)).getUTCDay() }; };
+      const plusDays = (s, n) => { const p = parts(s); const t = new Date(Date.UTC(p.y, p.m - 1, p.d + n)); return t.toISOString().slice(0, 10); };
+      const longDate = s => { const p = parts(s); return `${DAYS[p.dow]}, ${MONTHS[p.m - 1]} ${p.d}`; };
+      let info = null, comp = null, current = null;
+
+      function renderComps() {
+        const box = $('comps'); box.innerHTML = '';
+        for (const c of info.companionships) box.appendChild(el('button', { class: 'chip' + (comp && comp.key === c.key ? ' on' : ''), type: 'button', onclick: () => { comp = c; renderComps(); renderCal(); } }, c.label));
+        $('comp-area').textContent = comp ? (comp.sisters ? `${comp.label}: meals in ${comp.area || 'their area'}. Brothers, bring a sister along.` : `${comp.label}: ${comp.area || 'anywhere in the ward'}.`) : '';
+        $('areas').textContent = info.companionships.filter(c => c.sisters).map(c => `${c.label} — ${c.area || 'their area'}`).join(' · ') || 'see each set of sisters';
+        $('rule-areas').hidden = !info.companionships.some(c => c.sisters);
+        $('rule-brothers').innerHTML = '<b>Brothers:</b> to take the sisters out, bring a sister along — put her name in the form.' + (info.companionships.some(c => !c.sisters) ? ' The Elders are fine on their own.' : '');
+      }
+      // a month grid per month in the booking window; a taken day shows who, an open day books
+      function renderCal() {
+        const box = $('cal'); box.innerHTML = '';
+        if (!comp) return;
+        const booked = new Map(info.booked.filter(b => b.companionship === comp.key).map(b => [b.date, b.who]));
+        const last = plusDays(todayIso, info.days_ahead);
+        let cursor = todayIso.slice(0, 7);
+        while (cursor <= last.slice(0, 7)) {
+          const [y, m] = cursor.split('-').map(Number);
+          // this month starts at the current week, so a month that is nearly over isn't rows of grey
+          const tp = parts(todayIso), startDay = (y === tp.y && m === tp.m) ? Math.max(1, tp.d - tp.dow) : 1;
+          const first = new Date(Date.UTC(y, m - 1, startDay)).getUTCDay(), n = new Date(Date.UTC(y, m, 0)).getUTCDate();
+          const cells = DAYS.map(x => el('span', { class: 'dow' }, x[0]));
+          for (let i = 0; i < first; i++) cells.push(el('span', { class: 'pad' }));
+          for (let d = startDay; d <= n; d++) {
+            const day = iso(y, m, d);
+            if (day < todayIso || day > last) { cells.push(el('span', { class: 'day off' }, String(d))); continue; }
+            const who = booked.get(day);
+            cells.push(who
+              ? el('span', { class: 'day taken', title: who + ' has the ' + comp.label + ' that day' }, [String(d), el('i', {}, who.split(' ')[0])])
+              : el('button', { class: 'day open' + (day === todayIso ? ' today' : ''), type: 'button', title: 'Book ' + longDate(day), onclick: () => openSheet(day) }, String(d)));
+          }
+          box.appendChild(el('div', { class: 'mgrid-month' }, [el('div', { class: 'mgrid-name' }, MONTHS[m - 1] + (y !== Number(todayIso.slice(0, 4)) ? ' ' + y : '')), el('div', { class: 'mgrid meals' }, cells)]));
+          cursor = m === 12 ? `${y + 1}-01` : `${y}-${String(m + 1).padStart(2, '0')}`;
+        }
+        box.appendChild(el('p', { class: 'muted small' }, 'Tap an open day to book it. Days with a name are taken.'));
+      }
+      async function load() {
+        try {
+          info = await rpc('meals_public');
+          if (!info || !info.enabled || !info.companionships.length) { $('closed').hidden = false; $('main').hidden = true; return; }
+          $('main').hidden = false; $('closed').hidden = true;
+          comp = comp ? info.companionships.find(c => c.key === comp.key) || info.companionships[0] : info.companionships[0];
+          renderComps(); renderCal();
+        } catch (e) { $('closed').hidden = false; $('closed').querySelector('h2').textContent = /meals_public/.test(e.message) ? 'Meal sign-ups aren’t switched on yet' : 'Could not load the calendar'; $('closed').querySelector('p').textContent = /meals_public/.test(e.message) ? 'The leaders need to run supabase/meals.sql.' : e.message; }
+      }
+
+      // --- booking
+      const sendBtn = $('send'), errEl = $('error');
+      const fail = (msg, f) => { errEl.textContent = msg; errEl.hidden = false; if (f) f.focus(); };
+      const needsCompanion = () => comp && comp.sisters && $('gender').value === 'M';
+      $('gender').addEventListener('change', () => { $('companion-field').hidden = !needsCompanion(); });
+      function openSheet(day) {
+        current = day;
+        $('sheet-title').textContent = `${comp.label} · ${longDate(day)}`;
+        $('sheet-sub').textContent = comp.sisters ? `Somewhere in ${comp.area || 'their area'}. You’ll get their number once you’re booked.` : 'You’ll get their number once you’re booked.';
+        $('companion-field').hidden = !needsCompanion();
+        errEl.hidden = true; $('sheet').hidden = false; document.body.classList.add('signup-open'); setTimeout(() => $('name').focus(), 50);
+      }
+      function closeSheet() { $('sheet').hidden = true; document.body.classList.remove('signup-open'); current = null; }
+      $('cancel').addEventListener('click', closeSheet);
+      $('sheet').addEventListener('click', e => { if (e.target === $('sheet')) closeSheet(); });
+      document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('sheet').hidden) closeSheet(); });
+      sendBtn.addEventListener('click', async () => {
+        if (!current) return;
+        errEl.hidden = true;
+        const name = $('name').value.trim(), gender = $('gender').value, phone = $('phone').value.trim(), companion = $('companion').value.trim();
+        if (name.length < 2) return fail('Please enter your name.', $('name'));
+        if (!gender) return fail('Brother or sister? (It decides whether a sister needs to come along.)', $('gender'));
+        if (phone.replace(/\D/g, '').length < 10) return fail('Please enter a mobile number the missionaries can text.', $('phone'));
+        if (needsCompanion() && companion.length < 2) return fail(`To take the ${comp.label} out, a sister needs to come along — add her name.`, $('companion'));
+        sendBtn.disabled = true; sendBtn.textContent = 'Booking…';
+        try {
+          const r = await rpc('meals_signup', { p_companionship: comp.key, p_date: current, p_name: name, p_gender: gender, p_phone: phone, p_companion: needsCompanion() ? companion : null, p_notes: $('notes').value.trim() || null, p_website: $('website').value });
+          const day = current; closeSheet();
+          $('main').hidden = true;
+          const digits = String(r.phone || '').replace(/\D/g, '');
+          const view = el('main', { class: 'wrap' }, el('div', { class: 'success' }, [
+            el('div', { class: 'check', html: icons.check }),
+            el('h2', {}, 'You’re booked'),
+            el('p', {}, `${r.label || comp.label} · ${longDate(day)}` + (comp.sisters ? ` · somewhere in ${comp.area || 'their area'}` : '') + '.'),
+            digits ? el('p', {}, ['One more step — text them now to settle the time and place (they’ll confirm it fits their day): ', el('a', { href: 'sms:+1' + digits + '?&body=' + encodeURIComponent(`Hi! It's ${name.split(' ')[0]} from the ${NP.C.wardName || 'ward'} — I've got you for a meal on ${longDate(day)}. What time and where works for you?`) }, r.phone)]) : el('p', { class: 'muted' }, 'One more step — the ward mission leader will pass you their number so you can settle the time and place with them.'),
+            needsCompanion() ? el('p', { class: 'muted' }, `Bringing ${companion} along — thanks for looking after that.`) : null,
+            el('a', { class: 'btn', href: 'meals.html', style: 'text-decoration:none' }, 'Book another day'),
+            el('a', { class: 'btn secondary', href: 'index.html', style: 'text-decoration:none;margin-top:8px' }, 'Back to home'),
+          ]));
+          document.body.appendChild(view); window.scrollTo(0, 0);
+        } catch (e) {
+          sendBtn.disabled = false; sendBtn.textContent = 'Book it';
+          if (/already has the/.test(e.message)) { fail(e.message); load(); return; }
+          fail(e.message);
+        }
+      });
+      load();
+    })();
+  </script>
+</body>
+</html>

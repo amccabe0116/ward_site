@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <title>The Keys · Ward</title>
+  <meta name="theme-color" content="#1b2a41">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%231b2a41'/><text x='50' y='70' font-size='56' text-anchor='middle'>🔑</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="app.css?v=18">
+  <style>
+    .game-wrap { max-width: 480px; padding-bottom: 32px; }
+    .stage { position: relative; margin: 16px auto 0; border-radius: 16px; overflow: hidden; box-shadow: var(--shadow); background: #2b2f3a; touch-action: none; user-select: none; -webkit-user-select: none; }
+    .stage canvas { display: block; width: 100%; height: auto; }
+    .hud { position: absolute; left: 0; right: 0; top: 0; display: flex; justify-content: space-between; padding: 8px 12px; font-size: 13px; font-weight: 600; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,.6); pointer-events: none; }
+    .hud span { background: rgba(27,42,65,.55); padding: 3px 9px; border-radius: 999px; }
+    .overlay { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 24px; background: rgba(27,42,65,.82); color: #fff; }
+    .overlay[hidden] { display: none; }
+    .overlay h2 { font-family: var(--serif); font-size: 30px; margin: 0 0 6px; }
+    .overlay p { margin: 4px 0 14px; color: rgba(255,255,255,.85); max-width: 320px; }
+    .overlay .btn { width: auto; min-width: 200px; background: var(--gold); color: var(--navy); box-shadow: none; }
+    .overlay .btn.secondary { background: transparent; color: #fff; border: 1px solid rgba(255,255,255,.5); margin-top: 8px; }
+    .overlay input { font: inherit; font-size: 18px; padding: 10px 12px; border-radius: 10px; border: 0; width: 240px; max-width: 100%; text-align: center; margin: 4px 0 10px; }
+    .overlay .big { font-size: 44px; font-weight: 700; margin: 6px 0 2px; }
+    .overlay .small { font-size: 13px; color: rgba(255,255,255,.7); margin-top: 10px; }
+    .controls { text-align: center; font-size: 13px; margin: 10px 0 18px; }
+    .board h3 { margin: 0 0 10px; font-family: var(--serif); font-size: 20px; }
+    .board ol { margin: 0; padding-left: 22px; }
+    .board li { padding: 4px 0; border-bottom: 1px solid var(--line); display: flex; gap: 10px; }
+    .board li:last-child { border-bottom: 0; }
+    .board li b { flex: 1; }
+    .board li .lvl { color: var(--muted); font-size: 13px; }
+    .board .empty { color: var(--muted); }
+    .board .me { color: var(--ok); font-weight: 600; }
+  </style>
+</head>
+<body>
+  <header class="hero compact">
+    <a class="back" href="index.html">‹ Home</a>
+    <p class="eyebrow">Ward</p>
+    <h1>The Keys</h1>
+  </header>
+
+  <main class="wrap game-wrap">
+    <div class="stage" id="stage">
+      <canvas id="c" width="360" height="640"></canvas>
+      <div class="hud"><span id="hud-level">Level 1</span><span id="hud-score">0</span><span id="hud-lives">👶👶👶</span></div>
+      <div class="overlay" id="ov">
+        <h2>The Keys</h2>
+        <p>Crawl the baby to the bishop on the stand without the Primary presidency scooping you up. Hide under the pews — they can't reach you there, but crawling under is slow.</p>
+        <button class="btn" id="start">Start crawling</button>
+        <p class="small">Arrow keys / WASD, or drag anywhere on the chapel. Cheerios are worth points.</p>
+      </div>
+    </div>
+    <p class="controls muted">Grown-ups can only walk the aisles. Babies can go anywhere.</p>
+
+    <section class="card board">
+      <h3>High scores</h3>
+      <ol id="board"><li class="empty">Loading…</li></ol>
+      <p class="muted small" id="board-note"></p>
+    </section>
+
+    <p class="footer" id="keys-footer"><a href="index.html">Home</a> · <a href="admin.html">Leaders</a></p>
+  </main>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+  <script>
+    (function () {
+      const { rpc } = NP;
+      const $ = id => document.getElementById(id);
+      const cv = $('c'), ctx = cv.getContext('2d');
+      const W = 360, H = 640;
+
+      // ---------- the chapel ----------
+      const STAND = { y: 0, h: 96 };                 // the stand at the top
+      const PEW_H = 26, ROW_GAP = 34, ROWS = 7, PEW_TOP = 150;
+      const LEFT = { x: 30, w: 128 }, RIGHT = { x: 202, w: 128 };  // two banks, centre aisle 158–202
+      const pews = [];
+      for (let r = 0; r < ROWS; r++) { const y = PEW_TOP + r * (PEW_H + ROW_GAP); pews.push({ x: LEFT.x, y, w: LEFT.w, h: PEW_H }, { x: RIGHT.x, y, w: RIGHT.w, h: PEW_H }); }
+      const rowGapY = r => PEW_TOP + r * (PEW_H + ROW_GAP) - ROW_GAP / 2;   // centre of the walkway above row r
+      const BISHOP = { x: 180, y: 58 };
+      const START = { x: 180, y: 612 };
+      const CENTRE = 180, AISLE_L = 15, AISLE_R = 345, FRONT = 122;  // walkway y between the stand and the first row
+
+      const inPew = (x, y, pad) => pews.some(p => x > p.x - (pad || 0) && x < p.x + p.w + (pad || 0) && y > p.y - (pad || 0) && y < p.y + p.h + (pad || 0));
+
+      // ---------- state ----------
+      let running = false, last = 0, level = 1, score = 0, lives = 3, levelStart = 0, cheeriosGot = 0;
+      let baby, folks = [], cheerios = [], keysDown = {}, joy = null, caughtFlash = 0, elapsed = 0;
+      const NAMES = ['Primary President', '1st Counselor', '2nd Counselor', 'Secretary', 'Music Leader', 'Nursery Leader'];
+      const DRESSES = ['#c2617a', '#5b8fb9', '#7a9a5b', '#b98a5b', '#8a6db9', '#d09a3a'];
+
+      function newLevel() {
+        baby = { x: START.x, y: START.y, dir: -Math.PI / 2, wig: 0 };
+        cheeriosGot = 0; levelStart = performance.now(); elapsed = 0;
+        const n = Math.min(2 + Math.floor((level - 1) / 1), 6);
+        const speed = 62 + level * 7;
+        // patrol routes in the aisles: walkways between rows, the centre aisle, the side aisles
+        const routes = [
+          [{ x: 20, y: FRONT }, { x: 340, y: FRONT }],
+          [{ x: CENTRE, y: FRONT + 20 }, { x: CENTRE, y: 600 }],
+          [{ x: 20, y: rowGapY(3) }, { x: 340, y: rowGapY(3) }],
+          [{ x: AISLE_R, y: FRONT }, { x: AISLE_R, y: 600 }],
+          [{ x: 20, y: rowGapY(5) }, { x: 340, y: rowGapY(5) }],
+          [{ x: AISLE_L, y: FRONT }, { x: AISLE_L, y: 600 }],
+        ];
+        folks = [];
+        for (let i = 0; i < n; i++) {
+          const r = routes[i % routes.length];
+          const t = (i * 0.37) % 1;
+          folks.push({ name: NAMES[i % NAMES.length], dress: DRESSES[i % DRESSES.length], route: r, t, fwd: i % 2 === 0, speed, x: r[0].x + (r[1].x - r[0].x) * t, y: r[0].y + (r[1].y - r[0].y) * t, chasing: false, dir: 0 });
+        }
+        cheerios = [];
+        let tries = 0;
+        while (cheerios.length < 6 && tries++ < 400) {
+          const x = 12 + Math.random() * (W - 24), y = FRONT - 6 + Math.random() * (H - FRONT - 40);
+          if (!inPew(x, y, 8) && Math.hypot(x - START.x, y - START.y) > 60) cheerios.push({ x, y });
+        }
+        updateHud();
+      }
+      function updateHud() {
+        $('hud-level').textContent = 'Level ' + level;
+        $('hud-score').textContent = score + (cheeriosGot ? ' · 🥣' + cheeriosGot : '');
+        $('hud-lives').textContent = '👶'.repeat(lives) || '—';
+      }
+
+      // ---------- input ----------
+      addEventListener('keydown', e => { keysDown[e.key.toLowerCase()] = true; if (['arrowup', 'arrowdown', 'arrowleft', 'arrowright', ' '].includes(e.key.toLowerCase())) e.preventDefault(); });
+      addEventListener('keyup', e => { keysDown[e.key.toLowerCase()] = false; });
+      const stage = $('stage');
+      const pt = e => { const r = cv.getBoundingClientRect(); const t = e.touches ? e.touches[0] : e; return { x: (t.clientX - r.left) * W / r.width, y: (t.clientY - r.top) * H / r.height }; };
+      stage.addEventListener('pointerdown', e => { if (!running) return; joy = { ox: pt(e).x, oy: pt(e).y, x: pt(e).x, y: pt(e).y }; stage.setPointerCapture(e.pointerId); });
+      stage.addEventListener('pointermove', e => { if (joy) { const p = pt(e); joy.x = p.x; joy.y = p.y; } });
+      const endJoy = () => { joy = null; };
+      stage.addEventListener('pointerup', endJoy); stage.addEventListener('pointercancel', endJoy);
+
+      function inputVector() {
+        let dx = 0, dy = 0;
+        if (keysDown.arrowleft || keysDown.a) dx -= 1; if (keysDown.arrowright || keysDown.d) dx += 1;
+        if (keysDown.arrowup || keysDown.w) dy -= 1; if (keysDown.arrowdown || keysDown.s) dy += 1;
+        if (joy) { const jx = joy.x - joy.ox, jy = joy.y - joy.oy, d = Math.hypot(jx, jy); if (d > 8) { dx = jx / Math.max(d, 40) * Math.min(d / 40, 1); dy = jy / Math.max(d, 40) * Math.min(d / 40, 1); } }
+        const d = Math.hypot(dx, dy); if (d > 1) { dx /= d; dy /= d; }
+        return { dx, dy };
+      }
+
+      // ---------- update ----------
+      function moveInAisles(f, tx, ty) {
+        // grown-ups can't walk through pews: try the move, then each axis on its own
+        const R = 10;
+        const ok = (x, y) => !inPew(x, y, R) && x > 8 && x < W - 8 && y > FRONT - 14 && y < H - 8;
+        if (ok(tx, ty)) { f.x = tx; f.y = ty; return; }
+        if (ok(tx, f.y)) { f.x = tx; return; }
+        if (ok(f.x, ty)) { f.y = ty; }
+      }
+      function update(dt) {
+        elapsed = (performance.now() - levelStart) / 1000;
+        const under = inPew(baby.x, baby.y, 2);
+        const v = inputVector();
+        const sp = under ? 46 : 96;
+        if (v.dx || v.dy) { baby.dir = Math.atan2(v.dy, v.dx); baby.wig += dt * 12; }
+        baby.x = Math.max(8, Math.min(W - 8, baby.x + v.dx * sp * dt));
+        baby.y = Math.max(28, Math.min(H - 10, baby.y + v.dy * sp * dt));
+        // the stand: only the steps in the middle lead up to it
+        if (baby.y < STAND.h + 14 && (baby.x < 120 || baby.x > 240)) baby.y = STAND.h + 14;
+
+        for (const c of cheerios) { if (Math.hypot(c.x - baby.x, c.y - baby.y) < 14) { c.got = true; cheeriosGot++; score += 10; updateHud(); } }
+        cheerios = cheerios.filter(c => !c.got);
+
+        const sight = 105 + level * 4;
+        for (const f of folks) {
+          const d = Math.hypot(baby.x - f.x, baby.y - f.y);
+          const sees = !under && d < sight && baby.y > STAND.h;   // hidden under a pew, or safe on the stand
+          if (sees) {
+            f.chasing = true;
+            const cs = f.speed + 34;
+            const nx = f.x + (baby.x - f.x) / d * cs * dt, ny = f.y + (baby.y - f.y) / d * cs * dt;
+            f.dir = Math.atan2(baby.y - f.y, baby.x - f.x);
+            moveInAisles(f, nx, ny);
+            if (d < 17) { caught(f); return; }
+          } else {
+            if (f.chasing) { // walk back to the nearest point on the route
+              const [a, b] = f.route; const len = Math.hypot(b.x - a.x, b.y - a.y);
+              const t = Math.max(0, Math.min(1, ((f.x - a.x) * (b.x - a.x) + (f.y - a.y) * (b.y - a.y)) / (len * len)));
+              const px = a.x + (b.x - a.x) * t, py = a.y + (b.y - a.y) * t, dd = Math.hypot(px - f.x, py - f.y);
+              if (dd < 3) { f.chasing = false; f.t = t; } else { f.dir = Math.atan2(py - f.y, px - f.x); moveInAisles(f, f.x + (px - f.x) / dd * f.speed * dt, f.y + (py - f.y) / dd * f.speed * dt); }
+            } else {
+              const [a, b] = f.route; const len = Math.hypot(b.x - a.x, b.y - a.y);
+              f.t += (f.fwd ? 1 : -1) * f.speed * dt / len;
+              if (f.t >= 1) { f.t = 1; f.fwd = false; } if (f.t <= 0) { f.t = 0; f.fwd = true; }
+              const nx = a.x + (b.x - a.x) * f.t, ny = a.y + (b.y - a.y) * f.t;
+              f.dir = Math.atan2(ny - f.y, nx - f.x); f.x = nx; f.y = ny;
+            }
+          }
+        }
+        if (Math.hypot(baby.x - BISHOP.x, baby.y - BISHOP.y) < 30) won();
+      }
+
+      // ---------- drawing ----------
+      function rr(x, y, w, h, r) { ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); }
+      function drawChapel() {
+        // carpet
+        ctx.fillStyle = '#7d5b6f'; ctx.fillRect(0, 0, W, H);
+        ctx.fillStyle = 'rgba(0,0,0,0.06)'; for (let y = STAND.h; y < H; y += 16) ctx.fillRect(0, y, W, 8);
+        // centre aisle runner
+        ctx.fillStyle = '#8a6a7c'; ctx.fillRect(CENTRE - 20, STAND.h, 40, H - STAND.h);
+        // the stand
+        ctx.fillStyle = '#a97d4a'; ctx.fillRect(0, 0, W, STAND.h);
+        ctx.fillStyle = '#b98b57'; ctx.fillRect(0, 0, W, 10);
+        ctx.fillStyle = '#c4985f'; rr(120, STAND.h - 2, 120, 16, 4); ctx.fill();  // steps
+        ctx.fillStyle = '#d3a86c'; ctx.fillRect(126, STAND.h + 6, 108, 3);
+        // organ pipes + choir seats, purely decorative
+        ctx.fillStyle = '#c9a24a'; for (let i = 0; i < 9; i++) { const h = 30 + Math.abs(4 - i) * 6; ctx.fillRect(14 + i * 12, 12, 8, h); }
+        ctx.fillStyle = '#c9a24a'; for (let i = 0; i < 9; i++) { const h = 30 + Math.abs(4 - i) * 6; ctx.fillRect(W - 22 - i * 12, 12, 8, h); }
+        ctx.fillStyle = '#8c6239'; for (let i = 0; i < 3; i++) { rr(140, 14 + i * 12, 80, 8, 3); ctx.fill(); }
+        // podium
+        ctx.fillStyle = '#6b4a2b'; rr(BISHOP.x - 22, BISHOP.y + 4, 44, 22, 5); ctx.fill();
+        ctx.fillStyle = '#8c6239'; rr(BISHOP.x - 18, BISHOP.y + 7, 36, 6, 3); ctx.fill();
+        // pews
+        for (const p of pews) {
+          ctx.fillStyle = 'rgba(0,0,0,0.18)'; rr(p.x + 2, p.y + 4, p.w, p.h, 6); ctx.fill();
+          ctx.fillStyle = '#9a6a3c'; rr(p.x, p.y, p.w, p.h, 6); ctx.fill();
+          ctx.fillStyle = '#b07d48'; rr(p.x + 3, p.y + 3, p.w - 6, 9, 4); ctx.fill();
+          ctx.fillStyle = '#7d5430'; ctx.fillRect(p.x + 3, p.y + p.h - 6, p.w - 6, 3);
+        }
+        // doors at the back
+        ctx.fillStyle = '#5c3d22'; rr(CENTRE - 34, H - 12, 68, 14, 4); ctx.fill();
+      }
+      function drawBaby() {
+        const under = inPew(baby.x, baby.y, 2);
+        ctx.save(); ctx.translate(baby.x, baby.y); ctx.rotate(baby.dir + Math.PI / 2);
+        if (under) ctx.globalAlpha = 0.55;
+        const w = Math.sin(baby.wig) * 3;
+        ctx.fillStyle = '#f3e7d3'; ctx.beginPath(); ctx.ellipse(-8 + w, 9, 4, 3, 0, 0, 7); ctx.fill(); ctx.beginPath(); ctx.ellipse(8 - w, 9, 4, 3, 0, 0, 7); ctx.fill();  // feet
+        ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.ellipse(0, 4, 11, 13, 0, 0, 7); ctx.fill();   // onesie
+        ctx.fillStyle = '#f3e7d3'; ctx.beginPath(); ctx.ellipse(-9 - w, -2, 4, 3, 0, 0, 7); ctx.fill(); ctx.beginPath(); ctx.ellipse(9 + w, -2, 4, 3, 0, 0, 7); ctx.fill();  // hands
+        ctx.fillStyle = '#f6dcc4'; ctx.beginPath(); ctx.arc(0, -10, 9, 0, 7); ctx.fill();          // head
+        ctx.fillStyle = '#f7c6c6'; ctx.beginPath(); ctx.arc(-5, -8, 2, 0, 7); ctx.arc(5, -8, 2, 0, 7); ctx.fill();  // cheeks
+        ctx.fillStyle = '#3a2a1a'; ctx.beginPath(); ctx.arc(-3, -12, 1.2, 0, 7); ctx.arc(3, -12, 1.2, 0, 7); ctx.fill();
+        ctx.strokeStyle = '#3a2a1a'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(0, -19, 3, Math.PI * 1.1, Math.PI * 1.9); ctx.stroke();  // curl
+        ctx.restore();
+        if (under) { ctx.fillStyle = 'rgba(255,255,255,0.85)'; ctx.font = '600 10px Inter, sans-serif'; ctx.textAlign = 'center'; ctx.fillText('hiding', baby.x, baby.y + 26); }
+      }
+      function drawFolk(f) {
+        ctx.save(); ctx.translate(f.x, f.y); ctx.rotate(f.dir + Math.PI / 2);
+        ctx.fillStyle = 'rgba(0,0,0,0.18)'; ctx.beginPath(); ctx.ellipse(1, 6, 13, 9, 0, 0, 7); ctx.fill();
+        ctx.fillStyle = f.dress; ctx.beginPath(); ctx.ellipse(0, 2, 13, 10, 0, 0, 7); ctx.fill();     // dress / shoulders
+        ctx.fillStyle = '#4a3222'; ctx.beginPath(); ctx.arc(0, -4, 9, 0, 7); ctx.fill();             // hair
+        ctx.fillStyle = '#f0cdb0'; ctx.beginPath(); ctx.arc(0, -6, 6.5, 0, 7); ctx.fill();          // face
+        ctx.restore();
+        ctx.fillStyle = f.chasing ? '#ffd166' : 'rgba(255,255,255,0.8)'; ctx.font = (f.chasing ? '700 ' : '600 ') + '9px Inter, sans-serif'; ctx.textAlign = 'center';
+        ctx.fillText(f.chasing ? '!' + f.name + '!' : f.name, f.x, f.y + 24);
+      }
+      function drawBishop(t) {
+        const b = BISHOP;
+        ctx.fillStyle = '#1b2a41'; ctx.beginPath(); ctx.ellipse(b.x, b.y - 2, 15, 11, 0, 0, 7); ctx.fill();  // suit
+        ctx.fillStyle = '#fff'; ctx.fillRect(b.x - 3, b.y - 10, 6, 10);
+        ctx.fillStyle = '#c53030'; ctx.fillRect(b.x - 1.5, b.y - 9, 3, 9);                            // tie
+        ctx.fillStyle = '#f0cdb0'; ctx.beginPath(); ctx.arc(b.x, b.y - 14, 8, 0, 7); ctx.fill();      // head
+        ctx.fillStyle = '#6b6b6b'; ctx.beginPath(); ctx.arc(b.x, b.y - 17, 8, Math.PI, 2 * Math.PI); ctx.fill();  // silver hair
+        ctx.strokeStyle = '#3a2a1a'; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.arc(b.x, b.y - 13, 3.5, 0.2, Math.PI - 0.2); ctx.stroke();  // smile
+        // the keys, sparkling
+        const s = 1 + Math.sin(t / 250) * 0.08;
+        ctx.save(); ctx.translate(b.x + 28, b.y - 12); ctx.scale(s, s); ctx.font = '18px serif'; ctx.textAlign = 'center'; ctx.fillText('🔑', 0, 7); ctx.restore();
+        ctx.fillStyle = 'rgba(255,255,255,0.75)'; ctx.font = '600 9px Inter, sans-serif'; ctx.textAlign = 'center'; ctx.fillText('Bishop', b.x, b.y + 40);
+      }
+      function drawCheerio(c) { ctx.strokeStyle = '#e0b56a'; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(c.x, c.y, 4, 0, 7); ctx.stroke(); }
+      function drawJoy() { if (!joy) return; ctx.strokeStyle = 'rgba(255,255,255,0.35)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(joy.ox, joy.oy, 40, 0, 7); ctx.stroke(); const dx = joy.x - joy.ox, dy = joy.y - joy.oy, d = Math.hypot(dx, dy) || 1, k = Math.min(d, 40); ctx.fillStyle = 'rgba(255,255,255,0.5)'; ctx.beginPath(); ctx.arc(joy.ox + dx / d * k, joy.oy + dy / d * k, 14, 0, 7); ctx.fill(); }
+      function draw(t) {
+        drawChapel(); drawBishop(t);
+        cheerios.forEach(drawCheerio);
+        folks.forEach(drawFolk);
+        if (baby) drawBaby(); drawJoy();
+        if (caughtFlash > 0) { ctx.fillStyle = `rgba(197,48,48,${caughtFlash})`; ctx.fillRect(0, 0, W, H); }
+        ctx.fillStyle = 'rgba(255,255,255,0.7)'; ctx.font = '600 11px Inter, sans-serif'; ctx.textAlign = 'right'; ctx.fillText(elapsed.toFixed(1) + 's', W - 10, H - 6);
+      }
+
+      // ---------- flow ----------
+      function loop(t) {
+        if (!running) return;
+        const dt = Math.min(0.05, (t - last) / 1000 || 0); last = t;
+        update(dt); if (running) draw(t);
+        if (caughtFlash > 0) caughtFlash -= dt * 2;
+        requestAnimationFrame(loop);
+      }
+      function show(html) { $('ov').innerHTML = html; $('ov').hidden = false; }
+      function start() { $('ov').hidden = true; running = true; last = performance.now(); newLevel(); requestAnimationFrame(loop); }
+      function caught(f) {
+        running = false; lives--; updateHud(); caughtFlash = 0.6; draw(performance.now());
+        const lines = [`The ${f.name} scooped you up.`, `The ${f.name} says it's time for nursery.`, `The ${f.name}: "And where do you think you're going?"`, `The ${f.name} found you. Back to the foyer.`];
+        const line = lines[Math.floor(Math.random() * lines.length)];
+        if (lives > 0) show(`<h2>Caught!</h2><p>${line}</p><p>${lives} ${lives === 1 ? 'try' : 'tries'} left · score ${score}</p><button class="btn" id="again">Try again</button>`);
+        else { show(`<h2>Game over</h2><p>${line}</p><div class="big">${score}</div><p>Level ${level} · ${score} points</p>
+          <input id="name" maxlength="20" placeholder="Your name for the board" value="${(() => { try { return (localStorage.getItem('np_keys_name') || '').replace(/["<>&]/g, ''); } catch (e) { return ''; } })()}">
+          <button class="btn" id="save">Save score</button><button class="btn secondary" id="restart">Play again</button><p class="small" id="save-msg"></p>`);
+          $('save').addEventListener('click', submitScore); $('name').addEventListener('keydown', e => { if (e.key === 'Enter') submitScore(); });
+          $('restart').addEventListener('click', () => { level = 1; score = 0; lives = 3; start(); });
+          return; }
+        $('again').addEventListener('click', start);
+      }
+      function won() {
+        running = false;
+        const bonus = Math.max(0, Math.round((45 - elapsed) * 3)); const gained = 100 + bonus;
+        score += gained; updateHud();
+        try { localStorage.setItem('np_keys_best_level', String(Math.max(level, +(localStorage.getItem('np_keys_best_level') || 0)))); } catch (e) {}
+        show(`<h2>You got the keys! 🔑</h2><p>Level ${level} in ${elapsed.toFixed(1)}s — +${gained} points${bonus ? ` (${bonus} for speed)` : ''}${cheeriosGot ? ` · 🥣 ${cheeriosGot}` : ''}</p><div class="big">${score}</div><button class="btn" id="next">Level ${level + 1} →</button><p class="small">One more counselor joins each level, and they walk a little faster.</p>`);
+        $('next').addEventListener('click', () => { level++; start(); });
+      }
+      $('start').addEventListener('click', () => { level = 1; score = 0; lives = 3; start(); });
+
+      // ---------- the board ----------
+      let boardAvailable = true;
+      function localBest() { try { return JSON.parse(localStorage.getItem('np_keys_local') || '[]'); } catch (e) { return []; } }
+      async function loadBoard() {
+        const ol = $('board'); ol.innerHTML = '';
+        let rows = [];
+        try { rows = await rpc('keys_top', { p_limit: 10 }); }
+        catch (e) { boardAvailable = false; rows = localBest(); $('board-note').textContent = rows.length ? 'Scores on this device (the ward-wide board needs supabase/keys.sql).' : 'The ward-wide board isn’t set up yet (supabase/keys.sql).'; }
+        if (!rows.length) { ol.appendChild(Object.assign(document.createElement('li'), { className: 'empty', textContent: 'No scores yet — be the first to reach the bishop.' })); return; }
+        let me = ''; try { me = localStorage.getItem('np_keys_name') || ''; } catch (e) {}
+        for (const r of rows) { const li = document.createElement('li'); if (me && r.name === me) li.classList.add('me'); li.innerHTML = `<b></b><span class="lvl"></span><span></span>`; li.children[0].textContent = r.name; li.children[1].textContent = 'level ' + r.level; li.children[2].textContent = r.score; ol.appendChild(li); }
+      }
+      async function submitScore() {
+        const name = $('name').value.trim(); const msg = $('save-msg');
+        if (!name) { msg.textContent = 'Type a name first.'; return; }
+        try { localStorage.setItem('np_keys_name', name); } catch (e) {}
+        $('save').disabled = true; msg.textContent = 'Saving…';
+        try {
+          if (boardAvailable) await rpc('keys_submit', { p_name: name, p_score: score, p_level: level });
+          else { const l = localBest(); l.push({ name, score, level }); l.sort((a, b) => b.score - a.score); try { localStorage.setItem('np_keys_local', JSON.stringify(l.slice(0, 10))); } catch (e) {} }
+          msg.textContent = 'Saved to the board.'; loadBoard();
+        } catch (e) { msg.textContent = 'Not saved: ' + e.message; $('save').disabled = false; }
+      }
+
+      if (/debug/.test(location.search)) window.__keysDebug = { teleport: (x, y) => { if (baby) { baby.x = x; baby.y = y; } }, state: () => ({ level, score, lives, baby, folks: folks.length }) };
+
+      // hi-dpi canvas
+      function fit() { const dpr = Math.min(2, window.devicePixelRatio || 1); cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); if (!running) draw(0); }
+      addEventListener('resize', fit); fit();
+      drawChapel(); drawBishop(0);
+      loadBoard();
+    })();
+  </script>
+</body>
+</html>

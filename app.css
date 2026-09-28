@@ -277,16 +277,7 @@ table.grid th { color: var(--muted); font-weight: 600; font-size: 12px; text-tra
 .pill.off { background: #f3f4f6; color: var(--muted); }
 .pill.warn { background: #fdf3df; color: var(--warn); }
 .pill.wait { background: #e6f0fa; color: #1d4e89; }
-.pill.flag { background: #fde8e8; color: var(--danger); }
-.flag-select { font: inherit; font-size: 13px; padding: 4px 8px; border: 1px solid var(--line); border-radius: 999px; background: #fff; color: var(--muted); }
-.flag-select.warning { background: #fde8e8; color: var(--danger); border-color: #f3c2c2; font-weight: 600; }
-.flag-select.magnet { background: #ede7f6; color: #4a2d8a; border-color: #d6c9ee; font-weight: 600; }
 .pill.new { background: #f2ecdd; color: #6b4e0b; }
-.pill.magnet { background: #ede7f6; color: #4a2d8a; }
-.pill.due { background: var(--danger); color: #fff; }
-.cal-grid td.flag-cell { min-width: 150px; }
-.cal-grid td.flag-cell .small { font-size: 12px; margin-top: 2px; }
-.cal-grid td.flag-cell .pill.due { margin: 4px 0 0; }
 .due-text { color: var(--danger); font-weight: 600; }
 .row-pills { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 3px; }
 .row-pills .pill { margin-left: 0; font-size: 11px; padding: 1px 7px; }
@@ -316,14 +307,6 @@ table.grid th { color: var(--muted); font-weight: 600; font-size: 12px; text-tra
 .legend-list dt { display: flex; flex-wrap: wrap; gap: 4px; }
 .legend-list dd { margin: 0; color: var(--muted); }
 @media (max-width: 640px) { .legend-list > div { grid-template-columns: 1fr; gap: 4px; } }
-.flag-box { border-radius: 10px; padding: 10px 12px; margin: 10px 0 0; font-size: 15px; }
-.flag-box.flag { background: #fde8e8; color: #7a1f1f; }
-.flag-box.magnet { background: #ede7f6; color: #3b2470; }
-.flag-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 8px; }
-.flag-actions .chip.secondary { background: transparent; color: var(--muted); }
-.tpl-title { font-family: var(--serif); font-size: 17px; margin: 16px 0 4px; }
-textarea.tpl { min-height: 90px; }
-textarea.tpl.tall { min-height: 200px; }
 
 /* Leaders › Callings */
 .cal-top { flex-wrap: wrap; }

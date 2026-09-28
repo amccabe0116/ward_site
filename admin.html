@@ -135,14 +135,11 @@
         <details class="legend">
           <summary class="muted">What the tags mean</summary>
           <dl class="legend-list">
-            <div><dt><span class="pill flag">Warning</span></dt><dd>Attending a YSA ward is optional — we're telling them that if they don't start showing up, their records go back to their home ward. <em>Send the warning message</em> on their slide texts/emails them and records the date.</dd></div>
-            <div><dt><span class="pill magnet">Magnet</span></dt><dd>Their records came in without a new-member meeting, so they're being sent back to their previous ward. <em>Send the magnet message</em> does the same for this case.</dd></div>
             <div><dt><span class="pill off">Move</span> <span class="pill off">Aged out</span></dt><dd>From a note in parentheses after the name on the sheet, e.g. "Shane Woods (aged out)". Other Notes itself is just text — nothing is read out of it.</dd></div>
             <div><dt><span class="pill off">Nothing yet</span> <span class="pill wait">Proposed</span> <span class="pill wait">Texted</span> <span class="pill need">Answered / Declined</span> <span class="pill ok">Accepted / Sustained</span></dt><dd>Where the calling stands, from the Proposed / Who texts / Texted / Answer / Sustained columns.</dd></div>
             <div><dt><span class="pill new">new</span> <span class="pill new">not on sheet</span></dt><dd><em>new</em> = moved in within the last 30 days (LCR's move-in date; it drops off by itself). <em>not on sheet</em> = on LCR's report but with no row on the sheet yet — <em>Add to sheet</em> on their slide (or <em>Add all</em> on this filter) makes the row, pre-filled from LCR and their move-in form.</dd></div>
             <div><dt><span class="pill ok">Has a calling?</span></dt><dd>On the sheet and still on the ward roll, but no longer on LCR's Members without Callings report — so a calling was most likely recorded in LCR. Check their Callings/Classes tab in LCR; once it's done, <em>Remove</em> on their slide takes them off the sheet.</dd></div>
             <div><dt><span class="pill warn">Not in LCR</span></dt><dd>On the sheet but not on the ward roll at all — their records moved out (or were never here). <em>Remove</em> deletes the row.</dd></div>
-            <div><dt><span class="pill due">Ready to move out</span></dt><dd>The warning / magnet message went out long enough ago (21 days for Warning, 7 for Magnet — change it under Settings) that it's time to move their records. The date comes from the "Flag sent" column, which is filled in automatically when you send from here or can be typed in.</dd></div>
             <div><dt><span class="pill wait">✎ pending</span></dt><dd>Edited here on the site; it goes into the Google Sheet the next time the sync runs.</dd></div>
             <div><dt><span class="pill warn">Removed</span> <span class="pill warn">Left off the sheet</span></dt><dd><em>Remove</em> on a slide takes someone off this list: their row is deleted from the Google Sheet and they stay hidden until LCR stops listing them (records moved, or a calling recorded). <em>Leave off the sheet</em> does the same for someone who has no row on purpose (with a note saying why) — they stop counting as “not on sheet” and <em>Add all</em> skips them. Both are under the <em>Removed / left off</em> filter, where <em>Back on the list</em> undoes it.</dd></div>
           </dl>
@@ -255,28 +252,8 @@
         </div>
 
         <div class="card" style="margin-top:16px">
-          <h3 style="margin-top:0">Warning / Magnet messages</h3>
-          <p class="muted">What <em>Send the warning / magnet message</em> on a person's slide sends. <code>{first}</code> = first name, <code>{name}</code> = full name. Texts go out through the ward's SimpleTexting number; emails go through the Google account running the script (set up in <code>scripts/announcements.gs</code>) and can show a different <em>from</em> address once that address is added under Gmail → Settings → Accounts and Import → “Send mail as” in that account. Please read these through as a bishopric before the first send.</p>
-          <div class="inline">
-            <div class="field" style="margin:0;flex:1"><label for="n-from">Email sender name</label><input id="n-from" type="text" placeholder="Your Ward"></div>
-            <div class="field" style="margin:0;flex:1"><label for="n-from-email">From email <span class="opt">(a “Send mail as” address)</span></label><input id="n-from-email" type="email" placeholder="wardclerk@gmail.com"></div>
-            <div class="field" style="margin:0;flex:1"><label for="n-reply">Reply-to email <span class="opt">(optional)</span></label><input id="n-reply" type="email" placeholder="wardclerk@gmail.com"></div>
-          </div>
-          <div class="inline" style="margin-top:6px">
-            <div class="field" style="margin:0"><label for="n-due-warning">Move records this many days after a Warning</label><input id="n-due-warning" type="number" min="1" max="365" placeholder="21" style="max-width:110px"></div>
-            <div class="field" style="margin:0"><label for="n-due-magnet">…after a Magnet</label><input id="n-due-magnet" type="number" min="1" max="365" placeholder="7" style="max-width:110px"></div>
-          </div>
-          <p class="muted" style="margin:6px 0 0">Once that many days have passed since the "Flag sent" date, the person shows a red <b>Ready to move out</b> tag and appears in that filter.</p>
-          <h4 class="tpl-title">Warning</h4>
-          <div class="field"><label for="n-warning-sms">Text message</label><textarea id="n-warning-sms" class="tpl"></textarea></div>
-          <div class="field"><label for="n-warning-subject">Email subject</label><input id="n-warning-subject" type="text"></div>
-          <div class="field"><label for="n-warning-email">Email</label><textarea id="n-warning-email" class="tpl tall"></textarea></div>
-          <h4 class="tpl-title">Magnet</h4>
-          <div class="field"><label for="n-magnet-sms">Text message</label><textarea id="n-magnet-sms" class="tpl"></textarea></div>
-          <div class="field"><label for="n-magnet-subject">Email subject</label><input id="n-magnet-subject" type="text"></div>
-          <div class="field"><label for="n-magnet-email">Email</label><textarea id="n-magnet-email" class="tpl tall"></textarea></div>
-          <div class="inline" style="margin-top:12px"><button class="btn small" id="n-save">Save messages</button><span class="muted" id="n-msg"></span></div>
-          <details style="margin-top:14px">
+          <h3 style="margin-top:0">Texting (SimpleTexting)</h3>
+          <details open>
             <summary class="muted">Check texting (SimpleTexting)</summary>
             <p class="muted" style="margin:8px 0">Sends one short text through the Google script so you can confirm the SimpleTexting token works, without messaging a member.</p>
             <div class="inline">
@@ -563,7 +540,7 @@
         members = await rpc('admin_members', { p_pass: pass });
         renderMembers();
       }
-      // The Flag column needs the callings data (sheet copy + site edits); it fills in once that has loaded.
+      // The Calling in progress column needs the callings data (sheet copy + site edits); it fills in once that has loaded.
       let flagsReady = false, flagsLoading = false;
       function renderMembers() {
         const q = $('members-search').value.trim().toLowerCase();
@@ -590,7 +567,7 @@
         // active / inactive comes from the weekly LCR sync (the roster refresh deactivates anyone LCR no longer lists) — no hand switch here
         // "LCR class" here is whichever roll class has orgTypeIds set (Leaders › Settings › Roll classes) — if none do, the column is blank
         const lcrClass = classes.find(c => (c.orgTypeIds || []).length);
-        const t = el('table', { class: 'grid members-grid' }, el('thead', {}, el('tr', {}, [el('th', {}, 'Name'), el('th', {}, 'Org'), el('th', {}, lcrClass ? lcrClass.label : 'LCR class'), el('th', {}, 'Status'), el('th', {}, 'Calling in progress'), el('th', {}, 'Flag')])));
+        const t = el('table', { class: 'grid members-grid' }, el('thead', {}, el('tr', {}, [el('th', {}, 'Name'), el('th', {}, 'Org'), el('th', {}, lcrClass ? lcrClass.label : 'LCR class'), el('th', {}, 'Status'), el('th', {}, 'Calling in progress')])));
         const tb = el('tbody');
         for (const m of shown) {
           const ss = lcrClass ? (m.lcr_classes || []).find(c => lcrClass.orgTypeIds.includes(c.orgTypeId)) : null;
@@ -600,13 +577,12 @@
             el('td', { class: 'muted' }, ss ? ss.orgName : '—'),
             el('td', {}, el('span', { class: 'pill ' + (m.active ? 'ok' : 'off') }, m.active ? 'active' : 'inactive')),
             el('td', { class: 'pipe-td' }, safeCell(() => pipelineCell(m))),
-            el('td', { class: 'flag-cell' }, safeCell(() => flagCell(m))),
           ]);
           tb.appendChild(tr);
         }
         t.appendChild(tb); box.appendChild(t);
         if (!shown.length) box.appendChild(el('p', { class: 'empty' }, 'Nobody matches.'));
-        if (flagsError) chips.appendChild(el('span', { class: 'notice', style: 'margin:0' }, 'The callings data didn’t load, so the Calling and Flag columns are blank: ' + flagsError));
+        if (flagsError) chips.appendChild(el('span', { class: 'notice', style: 'margin:0' }, 'The callings data didn’t load, so the Calling in progress column is blank: ' + flagsError));
         if (!flagsReady && !flagsLoading && !flagsError) { flagsLoading = true; Promise.all([NPCallings.load(), NPPipeline.load()]).then(() => { flagsReady = true; renderMembers(); }).catch(e => { flagsError = String(e && e.message || e); renderMembers(); }).finally(() => { flagsLoading = false; }); }
       }
       // one person's cell failing (odd data) must not take the whole list down with it
@@ -634,25 +610,6 @@
         const m = members.find(x => x.id === memberId); if (!m) { toast('Not on the members list'); return; }
         document.querySelector('.tab[data-pane=members]').click();
         $('members-search').value = m.name; memberFilter = 'all'; renderMembers(); openPipeEditor(m, NPPipeline.openFor(m), null);
-      }
-      // Warning / Magnet straight from the list: the same Flag column the Callings slide edits
-      // (someone not on the callings list gets a row there; "Send" opens their slide for the message).
-      function flagCell(m) {
-        if (!flagsReady) return el('span', { class: 'muted small' }, '…');
-        const p = NPCallings.personFor(m), flag = p && !p.deleted ? p.flag : '';
-        const sel = el('select', { class: 'flag-select', title: 'Warning = may be sent back if they don’t attend · Magnet = being sent back' }, [el('option', { value: '' }, 'No flag'), el('option', { value: 'Warning' }, 'Warning'), el('option', { value: 'Magnet' }, 'Magnet')]);
-        sel.value = flag;
-        sel.className += flag ? ' ' + flag.toLowerCase() : '';
-        sel.addEventListener('change', async () => {
-          const to = sel.value;
-          if (to && !(await (async () => { const ok = confirm((to === 'Warning' ? 'Flag ' + m.name + ' as Warning (may be sent back to their home ward if they don’t attend)?' : 'Flag ' + m.name + ' as Magnet (being sent back, no new-member meeting)?') + (p && !p.deleted ? '' : '\n\nThey aren’t on the callings list yet — this adds a row for them.')); if (ok) await new Promise(r => setTimeout(r, 150)); return ok; })())) { sel.value = flag; return; }
-          sel.disabled = true;
-          try { await NPCallings.setFlag(m, to); toast(to ? m.name + ' flagged ' + to + ' — writing it to the Google Sheet…' : 'Flag cleared for ' + m.name); renderMembers(); }
-          catch (e) { sel.disabled = false; sel.value = flag; toast('Not saved: ' + (/admin_callings_edit/.test(e.message) ? 'run supabase/edits.sql + flags.sql first' : e.message), 5000); }
-        });
-        const bits = [sel];
-        if (flag) bits.push(el('button', { class: 'chip', type: 'button', title: p.flagSent ? 'Message sent ' + p.flagSent + ' — open their slide' : 'Open their slide in Callings to send the ' + flag.toLowerCase() + ' message', onclick: () => { document.querySelector('.tab[data-pane=callings]').click(); NPCallings.load().then(() => NPCallings.openPerson(p.sheetName)); } }, p.flagSent ? 'Sent ' + p.flagSent.replace(/\s*\(.*$/, '') : 'Send message'));
-        return el('div', { class: 'inline', style: 'gap:6px' }, bits);
       }
       $('members-search').addEventListener('input', renderMembers);
       // callings move along from the Overview too — redraw the list each time the tab opens
@@ -857,7 +814,7 @@
         const send = el('button', { class: 'btn small', type: 'button', disabled: '' }, 'Send');
         const paintCount = () => { const n = [...ta.value].length, seg = smsSegments(ta.value); count.textContent = n + ' characters · ' + seg + ' text' + (seg === 1 ? '' : 's') + (/[^\x00-\x7f]/.test(ta.value) ? ' (special characters shorten texts — plain quotes and dashes fit more)' : ''); };
         ta.addEventListener('input', paintCount); paintCount();
-        // a test to one phone first (the single-number path the Warning / Magnet texts use), remembered per device
+        // a test to one phone first (the single-number path the SimpleTexting test-text check uses), remembered per device
         const testPhone = el('input', { type: 'tel', placeholder: 'your mobile', inputmode: 'tel', style: 'width:150px', value: (() => { try { return localStorage.getItem('np_test_phone') || ''; } catch (e) { return ''; } })() });
         const testBtn = el('button', { class: 'chip', type: 'button', onclick: async () => {
           const digits = testPhone.value.replace(/\D/g, ''); if (digits.length < 10) { msg.textContent = 'Enter a 10-digit mobile number for the test.'; return; }
@@ -1029,12 +986,9 @@
         $('w-day').value = get('window_day') || '0';
         $('w-enforce').checked = (get('roll_enforce_window') || 'true') === 'true';
         showTextListSummary(get('textlist_last_sync'));
-        for (const [id, key] of TPL) $(id).value = get(key) || '';
         $('b-phone').value = (get('bishop_notify_phone') || '').replace(/^(\d{3})(\d{3})(\d{4})$/, '$1-$2-$3');
         $('b-msg').textContent = rows.some(r => r.key === 'bishop_notify_phone') ? '' : 'Run supabase/bishop.sql to switch the texts on.';
-        $('n-msg').textContent = rows.some(r => r.key === 'notify_warning_sms') ? '' : 'Run supabase/flags.sql to get the starter messages.';
       }
-      const TPL = [['n-from', 'notify_from_name'], ['n-from-email', 'notify_from_email'], ['n-reply', 'notify_reply_to'], ['n-due-warning', 'flag_due_days_warning'], ['n-due-magnet', 'flag_due_days_magnet'], ['n-warning-sms', 'notify_warning_sms'], ['n-warning-subject', 'notify_warning_email_subject'], ['n-warning-email', 'notify_warning_email'], ['n-magnet-sms', 'notify_magnet_sms'], ['n-magnet-subject', 'notify_magnet_email_subject'], ['n-magnet-email', 'notify_magnet_email']];
       $('t-send').addEventListener('click', async () => {
         const phone = $('t-phone').value.replace(/\D/g, ''); const msg = $('t-msg');
         if (phone.length < 10) { msg.textContent = 'Type a 10-digit cell number first.'; return; }
@@ -1067,12 +1021,6 @@
         if (digits && digits.length !== 10) { $('b-msg').textContent = 'Enter a 10-digit number (or leave it blank).'; return; }
         try { await rpc('admin_set_setting', { p_pass: pass, p_key: 'bishop_notify_phone', p_value: digits }); $('b-msg').textContent = digits ? 'Saved — new requests go to ' + digits.replace(/^(\d{3})(\d{3})(\d{4})$/, '$1-$2-$3') + '.' : 'Saved — texts are off.'; }
         catch (e) { $('b-msg').textContent = 'Not saved: ' + e.message; }
-      });
-      $('n-save').addEventListener('click', async () => {
-        try {
-          for (const [id, key] of TPL) await rpc('admin_set_setting', { p_pass: pass, p_key: key, p_value: $(id).value });
-          $('n-msg').textContent = 'Saved.'; if (window.NPCallings) NPCallings.refresh();
-        } catch (e) { $('n-msg').textContent = 'Not saved: ' + e.message; }
       });
       $('w-save').addEventListener('click', async () => {
         if (!rcClasses.length) { $('w-msg').textContent = 'Add at least one roll class first.'; return; }

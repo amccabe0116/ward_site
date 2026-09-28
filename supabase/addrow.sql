@@ -9,7 +9,7 @@ returns jsonb
 language plpgsql security definer set search_path = public, extensions as $$
 declare v_allowed text[] := array[
           -- the meeting columns (Edit on a slide)
-          'Proposed calling','text assignment / calling','texted','answer','sustained','Other Notes','Flag','Flag sent',
+          'Proposed calling','text assignment / calling','texted','answer','sustained','Other Notes',
           -- the intake columns (pre-filled by "Add to sheet")
           'LOCATION','AGE','RECENT CONVERT (under yr)','CAR','LENGTH OF STAY','MISSION','PURPOSE IN ATL','HOBBIES','MUSIC'];
         v_key text; v_clean jsonb := '{}'; v_out jsonb;
@@ -21,7 +21,6 @@ begin
     if not (v_key = any(v_allowed)) then raise exception 'column % is not editable', v_key; end if;
     if jsonb_typeof(p_values -> v_key) not in ('string', 'null') then raise exception 'values must be strings (or null to clear)'; end if;
     if length(p_values ->> v_key) > 500 then raise exception 'value too long'; end if;
-    if v_key = 'Flag' and not (coalesce(btrim(p_values ->> v_key), '') in ('', 'Warning', 'Magnet')) then raise exception 'Flag must be Warning, Magnet or empty'; end if;
     v_clean := v_clean || jsonb_build_object(v_key, btrim(p_values ->> v_key));
   end loop;
   insert into callings_edits (name, lcr_uuid, edits, updated_at, updated_by, synced_at, deleted)

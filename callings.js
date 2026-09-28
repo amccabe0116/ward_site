@@ -5,7 +5,7 @@
  *   lcr_callings – LCR's "Members without Callings" custom report: the base list (who is without
  *                  a calling right now, with age, city, phone, email, recommend, RM, move-in date)
  *   callings     – the leaders' "Members without Callings" Google Sheet: the NOTES (proposed
- *                  calling, who texts, answer, sustained, warnings…), attached to each LCR person
+ *                  calling, who texts, answer, sustained), attached to each LCR person
  *   newmember    – the "New Member Form" responses (how each person moved into the ward)
  * matches each person to the LCR roll (for attendance), and shows it two ways:
  *   • a list you can filter/search and click into
@@ -24,7 +24,6 @@ window.NPCallings = (function () {
   let attendance = new Map();// member_id -> Map(date -> Set(class))
   let sundays = [];          // last N Sundays, oldest → newest (YYYY-MM-DD)
   let edits = [];            // rows from callings_edits (site-side edits waiting for / written to the sheet)
-  let settings = {};         // settings rows (message templates, due-day thresholds)
   let filter = 'all', query = '', deckAt = -1, loaded = false, loading = null;
   const savingToSheet = new Set();  // sheet names with a Google Sheet write in flight
 
@@ -170,24 +169,15 @@ window.NPCallings = (function () {
       const pending = !!(ed && (!ed.synced_at || new Date(ed.updated_at) > sheetAt));
       if (pending || !sr) for (const [k, v] of Object.entries((ed && ed.edits) || {})) o[k] = v == null ? '' : v;  // null = cleared on purpose; no sheet row = the site copy is all there is
       const notes = o['Other Notes'] || '';
-      // Flag is its own column (Warning / Magnet) — the only place it comes from. Other Notes is free text
-      // and is never read for meaning (a note like "removed from warning list" must not flag anyone).
-      const flag = /^(warning|magnet)$/i.test(o.Flag || '') ? o.Flag.replace(/^\w/, c => c.toUpperCase()) : '';
       // tags come from the sheet's name suffix only, e.g. "Shane Woods (aged out)"
       const tags = [];
       if (/moved|moving/i.test(tag)) tags.push('Move');
       if (/aged out/i.test(tag)) tags.push('Aged out');
-      // when the warning / magnet message went out, and whether enough days have passed to move the records
-      const sentM = String(o['Flag sent'] || '').match(/(\d{1,2})\/(\d{1,2})\/(\d{2,4})/);
-      const sentAt = sentM ? new Date(+(sentM[3].length === 2 ? '20' + sentM[3] : sentM[3]), +sentM[1] - 1, +sentM[2]) : null;
-      const sentDays = sentAt ? Math.floor((Date.now() - sentAt.getTime()) / 864e5) : null;
-      const dueDays = flag ? dueDaysFor(flag) : null;
       const movedIn = lcr ? parseDay(lcr['Move In Date']) : null;
       const movedDays = movedIn ? Math.floor((Date.now() - movedIn.getTime()) / 864e5) : null;
       const isNew = movedDays !== null && movedDays >= 0 && movedDays <= NEW_DAYS;
       return { name, sheetName, tag, section: sr ? sr.section : '', movedIn, movedDays, isNew, o, lcr, member, forms: findForm(variants, member) || [], notes, onSheet: !!sr, pending, editedAt: ed ? ed.updated_at : null,
-        deleted: !!(ed && ed.deleted && !(sr && ed.synced_at && sheetAt > new Date(ed.synced_at))), flag, flagSent: o['Flag sent'] || '', sentAt, sentDays, dueDays, due: !!(flag && sentDays !== null && sentDays >= dueDays), tags,
-        flagged: !!flag || tags.length > 0,
+        deleted: !!(ed && ed.deleted && !(sr && ed.synced_at && sheetAt > new Date(ed.synced_at))), tags,
         proposed: o['Proposed calling'] || '', assignment: o['text assignment / calling'] || '',
         texted: o['texted'] || '', answer: o['answer'] || '', sustained: o['sustained'] || '' };
     };
@@ -237,31 +227,14 @@ window.NPCallings = (function () {
   }
   const FILTERS = {
     all: { label: 'Everyone', test: p => !p.sheetOnly && !p.deleted },
-    none: { label: 'Nothing proposed', test: p => !p.sheetOnly && !p.deleted && !truthy(p.proposed) && !truthy(p.assignment) && !p.flag },
+    none: { label: 'Nothing proposed', test: p => !p.sheetOnly && !p.deleted && !truthy(p.proposed) && !truthy(p.assignment) },
     waiting: { label: 'Proposed, waiting', test: p => !p.sheetOnly && !p.deleted && (truthy(p.proposed) || truthy(p.assignment)) && !isTicked(p.sustained) && !/accept/i.test(p.answer) },
-    // flags follow the person, calling or not (someone flagged from Leaders › Members may well have one)
-    warning: { label: 'Warning', test: p => !p.deleted && p.flag === 'Warning' },
-    magnet: { label: 'Magnet', test: p => !p.deleted && p.flag === 'Magnet' },
-    due: { label: 'Ready to move out', test: p => !p.deleted && p.due },
-    other: { label: 'Other notes', test: p => !p.sheetOnly && !p.deleted && !p.flag && truthy(p.notes) },
+    other: { label: 'Other notes', test: p => !p.sheetOnly && !p.deleted && truthy(p.notes) },
     new: { label: 'New / not on sheet', test: p => !p.sheetOnly && !p.deleted && (p.isNew || !p.onSheet) },
     hasCalling: { label: 'Has a calling?', test: p => !!p.sheetOnly && !!(p.member && p.member.active) },
     sheetOnly: { label: 'Not in LCR', test: p => !!p.sheetOnly && !(p.member && p.member.active) },
     removed: { label: 'Removed / left off', test: p => !!p.deleted },
   };
-  const FLAG_CLASS = { Warning: 'flag', Magnet: 'magnet' };
-  const DUE_DEFAULT = { Warning: 21, Magnet: 7 };
-  function dueDaysFor(flag) { const v = parseInt(settings['flag_due_days_' + flag.toLowerCase()], 10); return isNaN(v) ? DUE_DEFAULT[flag] : v; }
-  function sentLabel(p) {
-    if (!p.flag) return '';
-    if (p.sentDays === null) return truthy(p.flagSent) ? 'sent ' + p.flagSent : 'not sent yet';
-    const ago = p.sentDays === 0 ? 'today' : p.sentDays === 1 ? 'yesterday' : p.sentDays + ' days ago';
-    return `sent ${p.sentAt.getMonth() + 1}/${p.sentAt.getDate()} · ${ago}` + (p.due ? ' · ready to move' : ` · move after ${p.dueDays}d`);
-  }
-  function flagPill(p, opts) {
-    if (!p.flag) return null;
-    return el('span', { class: 'pill ' + FLAG_CLASS[p.flag], title: p.flagSent ? 'Message sent ' + p.flagSent : '' }, p.flag + (opts && opts.long && p.flagSent ? ' · sent ' + p.flagSent : ''));
-  }
   function sheetOnlyPill(p) {
     if (!p.sheetOnly) return null;
     const inLcr = p.member && p.member.active;
@@ -281,8 +254,6 @@ window.NPCallings = (function () {
   function applyFilter() {
     const q = norm(query);
     view = people.filter(p => FILTERS[filter].test(p) && (!q || norm(p.name).includes(q)));
-    // flag views: longest-sent first, then flagged-but-not-sent
-    if (filter === 'warning' || filter === 'magnet' || filter === 'due') view.sort((a, b) => (b.sentDays === null ? -1 : b.sentDays) - (a.sentDays === null ? -1 : a.sentDays));
   }
   function renderList() {
     applyFilter();
@@ -309,8 +280,6 @@ window.NPCallings = (function () {
       const st = status(p);
       const pills = [
         el('span', { class: 'pill ' + st.k }, st.t),
-        flagPill(p, { long: true }),
-        p.due ? el('span', { class: 'pill due' }, 'Ready to move out') : null,
         ...p.tags.map(tg => el('span', { class: 'pill off' }, tg)),
         p.isNew ? el('span', { class: 'pill new', title: 'Moved in ' + fmtShort(p.movedIn) + ' (LCR)' }, 'new') : null,
         (!p.onSheet && p.lcr && !p.deleted) ? el('span', { class: 'pill new' }, 'not on sheet') : null,
@@ -365,8 +334,6 @@ window.NPCallings = (function () {
       ]) : null,
       el('div', { class: 'badges' }, [
         el('span', { class: 'pill ' + st.k }, st.t),
-        flagPill(p, { long: true }),
-        p.due ? el('span', { class: 'pill due' }, 'Ready to move out') : null,
         ...p.tags.map(tg => el('span', { class: 'pill off' }, tg)),
         p.isNew ? el('span', { class: 'pill new' }, 'New · moved in ' + (p.movedDays === 0 ? 'today' : p.movedDays === 1 ? 'yesterday' : p.movedDays + ' days ago')) : null,
         (!p.onSheet && p.lcr && !p.deleted) ? el('span', { class: 'pill new' }, 'Not on the sheet yet') : null,
@@ -392,25 +359,6 @@ window.NPCallings = (function () {
       dl([['Proposed', p.proposed, { big: true }], ['Who texts', p.assignment], ['Texted', /^\s*y(es)?\s*$/i.test(p.texted) ? '✓ Yes' : p.texted], ['Answer', p.answer], ['Sustained', /^\s*y(es)?\s*$/i.test(p.sustained) ? '✓ Yes' : p.sustained]]),
       (p.deleted && !p.onSheet) ? el('p', { class: 'muted' }, 'Kept off the callings sheet on purpose — they don\u2019t count as “not on sheet” and Add all skips them. Back on the list undoes it.') : null,
       (!truthy(p.proposed) && !truthy(p.assignment) && !truthy(p.notes) && !p.deleted) ? el('p', { class: 'muted' }, p.onSheet ? 'Nothing proposed yet.' : p.pending ? 'Not on the callings sheet yet — their row goes in with Save to sheet or the next sync.' : 'Not on the callings sheet yet — Add to sheet makes their row (location, age and move-in form answers filled in), or saving an edit adds it.') : null,
-      p.flag ? el('div', { class: 'flag-box ' + FLAG_CLASS[p.flag] }, [
-        el('div', {}, [el('b', {}, p.flag + ': '), FLAG_MEANING[p.flag]]),
-        el('div', { class: 'flag-actions' }, (() => {
-          const sc = sentChannels(p), hasPhone = !!L['Individual Phone'], hasEmail = !!L['Individual E-mail'];
-          const missing = truthy(p.flagSent) ? [hasPhone && !sc.text ? 'text' : null, hasEmail && !sc.email ? 'email' : null].filter(Boolean) : [];
-          const avail = hasPhone && hasEmail ? ' (text + email)' : hasPhone ? ' (text)' : hasEmail ? ' (email)' : '';
-          const when = p.due ? `Sent ${p.sentDays} days ago — past the ${p.dueDays}-day mark, ready to move their records`
-            : p.sentDays !== null ? `Sent ${p.sentDays === 0 ? 'today' : p.sentDays === 1 ? 'yesterday' : p.sentDays + ' days ago'}${truthy(p.flagSent) && (sc.text !== sc.email) ? ` by ${sc.text ? 'text' : 'email'}` : ''} · move records after ${p.dueDays} days`
-            : truthy(p.flagSent) ? 'Sent ' + p.flagSent : `Not sent yet · records move ${p.dueDays} days after sending`;
-          return [
-            // the channel that hasn't gone out yet gets its own button; "Send again" resends everything
-            ...missing.map(ch => el('button', { class: 'chip', type: 'button', onclick: () => sendFlagMessage(p, ch) }, `Send the ${ch} too`)),
-            (hasPhone || hasEmail) ? el('button', { class: 'chip' + (missing.length ? ' secondary' : ''), type: 'button', onclick: () => sendFlagMessage(p) }, (truthy(p.flagSent) ? 'Send again' : 'Send the ' + p.flag.toLowerCase() + ' message') + avail) : null,
-            el('span', { class: p.due ? 'due-text' : 'muted' }, when + (missing.length ? ` · ${missing.join(' and ')} not sent yet` : '')),
-          ];
-        })().concat([
-          (!L['Individual Phone'] && !L['Individual E-mail']) ? el('span', { class: 'muted' }, 'No phone or email in LCR') : null,
-        ])),
-      ]) : null,
       p.pending ? el('p', { class: 'muted small' }, savingToSheet.has(p.sheetName) ? 'Saving to the Google Sheet…' : C.sheetsRefreshUrl ? 'Edited here · not in the Google Sheet yet — Save to sheet, or it goes in with the next sync' : 'Edited here · goes into the Google Sheet on the next sync') : null,
     ]);
     const tr = truthy(L['Temple Recommend Status']) ? L['Temple Recommend Status'] + (truthy(L['Temple Recommend Type']) ? ' · ' + (/proxy/i.test(L['Temple Recommend Type']) ? 'limited-use' : L['Temple Recommend Type'].toLowerCase()) : '') : (p.lcr ? 'None' : '');
@@ -453,28 +401,19 @@ window.NPCallings = (function () {
     return el('div', { class: 'slide' }, [head, el('div', { class: 'slide-grid' }, [el('div', { class: 'slide-col' }, [calling, about, attCard]), el('div', { class: 'slide-col' }, formCard)])]);
   }
   // ---------- editing the sheet columns ----------
-  const EDIT_COLS = [['Flag', 'Flag', 'select'], ['Other Notes', 'Other notes', 'textarea'], ['Proposed calling', 'Proposed calling', 'input'], ['text assignment / calling', 'Who texts', 'input'], ['texted', 'Texted', 'checkbox'], ['answer', 'Answer', 'input'], ['sustained', 'Sustained', 'checkbox'], ['Flag sent', 'Flag message sent', 'datecheck']];
+  const EDIT_COLS = [['Other Notes', 'Other notes', 'textarea'], ['Proposed calling', 'Proposed calling', 'input'], ['text assignment / calling', 'Who texts', 'input'], ['texted', 'Texted', 'checkbox'], ['answer', 'Answer', 'input'], ['sustained', 'Sustained', 'checkbox']];
   // "texted" / "sustained" on the sheet are Y / y / yes (or a name or date); anything but blank / N counts as ticked
   // A yes/no dialog; waits a beat afterwards because Safari can drop a request fired straight after a dialog closes ("Load failed").
   async function ask(msg) { const ok = confirm(msg); if (ok) await new Promise(r => setTimeout(r, 150)); return ok; }
   const isTicked = v => truthy(v) && !/^\s*(n|no)\s*$/i.test(v);
-  const todayMDY = () => new Date().toLocaleDateString('en-US', { timeZone: C.timeZone, month: 'numeric', day: 'numeric', year: 'numeric' });
-  const FLAG_MEANING = {
-    Warning: 'attending here is optional — if they don\'t start coming, their records go back to their home ward.',
-    Magnet: 'came in without a new-member meeting — records are being sent back to their previous ward.',
-  };
   function editCalling(p, card) {
     const fields = EDIT_COLS.map(([key, label, kind]) => {
       let input;
-      if (kind === 'select') {
-        input = el('select', { class: 'edit-field', 'data-key': key }, [el('option', { value: '' }, 'No flag'), el('option', { value: 'Warning' }, 'Warning — may be sent back if they don\'t attend'), el('option', { value: 'Magnet' }, 'Magnet — being sent back (no new-member meeting)')]);
-        input.value = p.flag || '';
-      } else if (kind === 'checkbox' || kind === 'datecheck') {
-        // datecheck: ticking it fills in today's date (the send button does this automatically)
-        input = el('input', { type: 'checkbox', class: 'edit-field edit-check', 'data-key': key, 'data-orig': p.o[key] || '', 'data-kind': kind });
+      if (kind === 'checkbox') {
+        input = el('input', { type: 'checkbox', class: 'edit-field edit-check', 'data-key': key, 'data-orig': p.o[key] || '' });
         input.checked = isTicked(p.o[key]);
         const orig = p.o[key] || '';
-        const hint = orig && !/^\s*y(es)?\s*$/i.test(orig) ? ' (' + orig + ')' : kind === 'datecheck' ? ' (ticking it records today\u2019s date)' : '';
+        const hint = orig && !/^\s*y(es)?\s*$/i.test(orig) ? ' (' + orig + ')' : '';
         return el('label', { class: 'edit-row check' }, [el('span', {}, label), el('span', { class: 'check-wrap' }, [input, el('span', { class: 'muted' }, hint)])]);
       } else {
         input = el(kind, { class: 'edit-field', 'data-key': key, placeholder: label });
@@ -493,8 +432,8 @@ window.NPCallings = (function () {
         const orig = p.o[f.dataset.key] || '';
         if (f.type === 'checkbox') {
           if (f.checked === isTicked(orig)) continue;  // untouched
-          // ticking keeps whatever was there (a name, a date) or becomes Y — today's date for "Flag sent"; unticking clears the cell
-          set(f.dataset.key, f.checked ? (isTicked(orig) ? orig : f.dataset.kind === 'datecheck' ? todayMDY() : 'Y') : '');
+          // ticking keeps whatever was there (a name, a date) or becomes Y; unticking clears the cell
+          set(f.dataset.key, f.checked ? (isTicked(orig) ? orig : 'Y') : '');
         } else if (f.value.trim() !== orig) set(f.dataset.key, f.value.trim());
       }
       if (!changed) { cancel(); return; }
@@ -542,55 +481,6 @@ window.NPCallings = (function () {
     } catch (e) { toast(/admin_callings_delete/.test(e.message) ? 'Run supabase/flags.sql in Supabase first' : 'Failed: ' + e.message, 4000); }
   }
 
-  // Warning / Magnet message: templates live in Settings; the Apps Script web app sends the
-  // text (SimpleTexting) and the email, then the sent date is written to the sheet.
-  let templates = null;
-  async function loadTemplates() {
-    if (templates) return templates;
-    const rows = await rpc('admin_get_settings', { p_pass: ctx.getPass() });
-    settings = Object.fromEntries(rows.map(r => [r.key, r.value]));
-    templates = Object.fromEntries(rows.filter(r => r.key.startsWith('notify_')).map(r => [r.key, r.value]));
-    return templates;
-  }
-  function fill(tpl, p) { return String(tpl || '').replace(/\{first\}/g, p.name.split(' ')[0]).replace(/\{name\}/g, p.name); }
-  // What the "Flag sent" cell says went out: "9/13/2026 (email)", "9/13/2026 (text + email)",
-  // "9/13/2026 (email) · 9/16/2026 (text)" (the other channel sent later). A bare date counts as both.
-  function sentChannels(p) {
-    const v = String(p.flagSent || '');
-    if (!v.trim()) return { text: false, email: false };
-    const named = /\b(text|email)\b/i.test(v);
-    return { text: !named || /\btext\b/i.test(v), email: !named || /\bemail\b/i.test(v) };
-  }
-  // only: 'text' | 'email' sends just that channel (the one that hasn't gone out yet); otherwise everything LCR has.
-  async function sendFlagMessage(p, only) {
-    const L = p.lcr || {};
-    const phone = only === 'email' ? '' : (L['Individual Phone'] || '').replace(/\D/g, ''), email = only === 'text' ? '' : (L['Individual E-mail'] || '');
-    if (!phone && !email) { toast(only ? `No ${only === 'text' ? 'phone' : 'email'} for them in LCR` : 'No phone or email for them in LCR'); return; }
-    if (!C.sheetsRefreshUrl) { toast('Sending needs the Google script set up as a web app (steps 5–8 in scripts/announcements.gs)', 5000); return; }
-    let t; try { t = await loadTemplates(); } catch (e) { toast('Run supabase/flags.sql first'); return; }
-    const k = p.flag.toLowerCase();
-    const sms = phone ? fill(t['notify_' + k + '_sms'], p) : '', subject = email ? fill(t['notify_' + k + '_email_subject'], p) : '', body = email ? fill(t['notify_' + k + '_email'], p) : '';
-    if (!sms && !body) { toast('No message template saved yet — see Settings'); return; }
-    const preview = [phone ? `TEXT to ${L['Individual Phone']}:\n${sms}` : null, email ? `EMAIL to ${email}:\n${subject}\n\n${body}` : null].filter(Boolean).join('\n\n—————\n\n');
-    if (!(await ask(`Send this to ${p.name}?\n\n${preview}`))) return;
-    try {
-      const r = await fetch(C.sheetsRefreshUrl, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ action: 'notify', pass: ctx.getPass(), name: p.name, phone, email, flag: p.flag, sms, subject, body, fromName: t.notify_from_name || '', fromEmail: t.notify_from_email || '', replyTo: t.notify_reply_to || '' }) });
-      const j = await r.json();
-      const sentSms = j.sms === 'sent', sentEmail = j.email === 'sent';
-      if (!sentSms && !sentEmail) throw new Error(j.error || 'send failed');  // one channel is enough to count as sent
-      const today = todayMDY(), now = today + (sentSms && sentEmail ? ' (text + email)' : sentSms ? ' (text)' : ' (email)');
-      // sending the channel that was still missing keeps the first date (the move-out countdown runs from it)
-      const before = sentChannels(p), addsOther = truthy(p.flagSent) && ((sentSms && !before.text && before.email) || (sentEmail && !before.email && before.text)) && !(before.text && before.email);
-      await rpc('admin_callings_edit', { p_pass: ctx.getPass(), p_name: p.sheetName, p_lcr_uuid: (p.lcr && p.lcr['Person UUID']) || null, p_values: { Flag: p.flag, 'Flag sent': addsOther ? p.flagSent + ' · ' + now : now }, p_by: null });
-      edits = await rpc('admin_callings_edits', { p_pass: ctx.getPass() });
-      const keep = p.sheetName; build(); applyFilter(); const at = view.findIndex(x => x.sheetName === keep); if (at >= 0) deckAt = at; renderList(); renderDeck();
-      saveToSheet(p, null, true);
-      const what = sentSms && sentEmail ? 'Text and email sent' : sentSms ? 'Text sent' : 'Email sent';
-      const miss = (!sentSms && phone ? ` · text not sent (${j.error || 'no SimpleTexting key yet'})` : !sentEmail && email ? ` · email not sent (${j.error || 'unknown'})` : '') + (sentEmail && j.note ? ` · ${j.note}` : '');
-      toast(`${what} to ${p.name}${miss}`, miss ? 8000 : 3500);
-    } catch (e) { toast('Not sent: ' + e.message, 5000); }
-  }
-
   function renderDeck() {
     const p = view[deckAt]; if (!p) return;
     $('deck-pos').textContent = `${deckAt + 1} of ${view.length}`;
@@ -620,8 +510,6 @@ window.NPCallings = (function () {
       catch (e) { $('cal-list').innerHTML = ''; $('cal-list').appendChild(el('p', { class: 'notice' }, 'Run supabase/sheets.sql in Supabase first (' + e.message + ').')); loading = null; return; }
       sheets = Object.fromEntries(rows.map(r => [r.key, r]));
       try { edits = await rpc('admin_callings_edits', { p_pass: pass }); } catch (e) { edits = []; }
-      try { settings = Object.fromEntries((await rpc('admin_get_settings', { p_pass: pass })).map(r => [r.key, r.value])); } catch (e) { settings = {}; }
-      templates = null;
       attendance = new Map();
       try {
         for (const r of await rpc('admin_attendance_recent', { p_pass: pass, p_weeks: 8 })) {
@@ -772,30 +660,13 @@ window.NPCallings = (function () {
     }
     filter = 'all'; applyFilter(); renderList(); toast('Not on the list any more');
   }
-  // ---- flags from Leaders › Members ----
+  // ---- looked up from Leaders › Members / the pipeline ----
   // The callings-list entry that is this roster member, if any: by LCR uuid, then by the member link.
   function personFor(member) {
     if (!loaded || !member) return null;
     const hit = p => (p.member && p.member.id === member.id) || (member.lcr_uuid && p.lcr && p.lcr['Person UUID'] === member.lcr_uuid);
     return people.find(p => hit(p) && !p.deleted) || people.find(hit) || null;
   }
-  // Set (or clear) a member's Flag straight from the Members list. Someone who isn't on the callings
-  // list gets a row of their own (named "First Last", like the sheet); a removed / left-off person
-  // comes back on the list. Any change clears "Flag sent" — that date belonged to the old flag.
-  async function setFlag(member, flag) {
-    await load();
-    let p = personFor(member);
-    const [last, rest] = String(member.name || '').split(/,\s*/);
-    const sheetName = p ? p.sheetName : ((rest || '').split(' ')[0] + ' ' + (last || '')).trim();
-    if (p && p.deleted && flag) await rpc('admin_callings_delete', { p_pass: ctx.getPass(), p_name: p.sheetName, p_delete: false, p_by: null });
-    await rpc('admin_callings_edit', { p_pass: ctx.getPass(), p_name: sheetName, p_lcr_uuid: member.lcr_uuid || (p && p.lcr && p.lcr['Person UUID']) || null, p_values: { Flag: flag || null, 'Flag sent': null }, p_by: null });
-    edits = await rpc('admin_callings_edits', { p_pass: ctx.getPass() });
-    build(); applyFilter(); renderList();
-    p = people.find(x => x.sheetName === sheetName) || personFor(member);
-    if (p && C.sheetsRefreshUrl) saveToSheet(p, null, true);     // background: into the Google Sheet
-    return p;
-  }
-
   // Settings → "Send me a test text": just the SMS leg, to check the SimpleTexting token
   async function sendTestText(phone, text) {
     if (!C.sheetsRefreshUrl) throw new Error('the Google script web app URL is not set (config.js)');
@@ -804,5 +675,5 @@ window.NPCallings = (function () {
     if (j.sms !== 'sent') throw new Error(j.error || 'text not sent');
     return j;
   }
-  return { init, load, refresh: () => load(true), data, openPerson, isTicked, sendTestText, personFor, setFlag };
+  return { init, load, refresh: () => load(true), data, openPerson, isTicked, sendTestText, personFor };
 })();

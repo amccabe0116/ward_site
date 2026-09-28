@@ -29,13 +29,13 @@
  *      into the "Members without Callings" sheet — only the meeting columns (proposed calling,
  *      who texts, texted, answer, sustained, other notes); people not on the sheet get a new row.
  *      Needs supabase/edits.sql.
- *   7. "Refresh from Google Sheets" button + sending Warning / Magnet messages from the site:
- *      Deploy → New deployment → Web app · Execute as: Me · Who has access: Anyone → Deploy,
- *      copy the web-app URL into `sheetsRefreshUrl` in config.js. The endpoint only does
- *      anything when a signed-in leader's token (or the passphrase) is sent with the request.
+ *   7. "Refresh from Google Sheets" button (and the site's other web-app actions, like the
+ *      texting check under Leaders › Settings): Deploy → New deployment → Web app ·
+ *      Execute as: Me · Who has access: Anyone → Deploy, copy the web-app URL into
+ *      `sheetsRefreshUrl` in config.js. The endpoint only does anything when a signed-in
+ *      leader's token (or the passphrase) is sent with the request.
  *   8. Texts: Script properties → SIMPLETEXTING_KEY = an API key from SimpleTexting
  *      (Settings → API), and SIMPLETEXTING_NUMBER = the ward texting number (digits only).
- *      Emails go from this Google account (GmailApp); the wording lives under Leaders › Settings.
  *   9. Text list sync (new member form → SimpleTexting): `syncTextList` reads the "New Member
  *      Form" responses and adds only the people who ticked "agree" on the form's
  *      "Automated Messages - Terms and conditions" question (and gave a mobile number) to the
@@ -381,7 +381,8 @@ function writePendingEdits_(sbUrl, sbKey, adminPass, onlyNames) {
 // passphrase or session token as "pass" and an "action":
 //   sheets → write every pending edit to the callings sheet, then re-copy all sheets  {"ok":true,"written":2,"callings":130,…}
 //   save   → one person's pending edits ("name") to the sheet, re-copy the callings sheet
-//   notify → send a Warning / Magnet text + email (sendFlagMessage_)
+//   notify → send a text and/or email (sendFlagMessage_) — used by the Settings "test text" check
+//            and the announcements "Text a reminder" single-number test
 //   textlist → add the form's text opt-ins to the SimpleTexting list now (syncTextList)
 //   calendar → rebuild calendar.ics + cal/<id>.ics from the approved posts now (syncCalendar)
 //   remind   → text the ward list about a post (sendReminder_); { preview: true } just returns the list size;
@@ -430,14 +431,14 @@ function checkSimpleTexting() {
   });
 }
 
-// Warning / Magnet message from a person's slide: a text through SimpleTexting (script
-// property SIMPLETEXTING_KEY = the API token from SimpleTexting → Settings → API — the API is
-// enabled per account by SimpleTexting support; optional SIMPLETEXTING_NUMBER = the ward's
-// texting number, digits only, when it isn't the account's primary number) and/or an email
-// from this Google account — or from the "From email" set under Leaders › Settings once that
-// address is a verified "Send mail as" alias of this Gmail. A "test" body ({ action: 'notify', test: true, phone, sms }) sends
-// just the text — the Settings page uses it to check the token. The page sends the already-filled-in wording, so it is exactly what the leader
-// saw in the confirmation box. Returns { ok, sms: 'sent'|'skipped'|'failed', email: … }.
+// Send a text through SimpleTexting (script property SIMPLETEXTING_KEY = the API token from
+// SimpleTexting → Settings → API — the API is enabled per account by SimpleTexting support;
+// optional SIMPLETEXTING_NUMBER = the ward's texting number, digits only, when it isn't the
+// account's primary number) and/or an email from this Google account, given a fromEmail/replyTo
+// (verified "Send mail as" alias of this Gmail, if set). A "test" body ({ action: 'notify', test: true, phone, sms })
+// sends just the text — the Settings page's "Check texting" uses it to check the token, and the
+// announcements "Text a reminder" box uses it for its single-number test. Also used directly (not
+// through the web app) by notifyBishop_. Returns { ok, sms: 'sent'|'skipped'|'failed', email: … }.
 function sendFlagMessage_(b) {
   const props = PropertiesService.getScriptProperties();
   const res = { ok: true, sms: 'skipped', email: 'skipped' };

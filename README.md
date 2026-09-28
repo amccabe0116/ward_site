@@ -35,7 +35,7 @@ supabase/notes.sql     hardened Leaders login (admin_login/admin_logout/session 
 supabase/inbox.sql     editable announcements + Bishop meeting requests (part of schema.sql too)
 supabase/sheets.sql    mirrors the two leadership Google Sheets (callings doc, new-member form)
 supabase/edits.sql     site-side edits to the callings sheet, written back by the Apps Script
-supabase/flags.sql     Flag column (Warning/Magnet), row deletion, message templates
+supabase/flags.sql     lets a callings-sheet row be marked deleted (and undone) from the site
 supabase/keys.sql      high-score board for the mini game
 supabase/addrow.sql    Add to sheet: lets the site pre-fill the callings sheet's intake columns
 supabase/posts.sql     posts (events / notices with flyers), public submission, approval, the "flyers" bucket
@@ -89,9 +89,8 @@ list empty and the "Feed the missionaries" card never appears on the home page.
    Rows show as *synced* on the admin page once LCR has them.
 4. **Leaders › Callings** and **Leaders › Overview** track callings in progress for any member
    (`pipeline.js`, `calling_pipeline` table) alongside the leadership's own "members without callings"
-   Google Sheet and the new-member form responses, with a meeting-deck view for handing out assignments,
-   a Flag column (Warning / Magnet) and message templates, and an Overview landing page (roll size,
-   men/women split, moved-in, sacrament attendance, recent converts).
+   Google Sheet and the new-member form responses, with a meeting-deck view for handing out assignments
+   and an Overview landing page (roll size, men/women split, moved-in, sacrament attendance, recent converts).
 5. **Announcements as posts** (`supabase/posts.sql`, `posts.js`). The home page's *What's happening*
    list is built from posts — events or notices, soonest first — that anyone can submit via `post.html`
    (with a flyer) for leaders to approve, or that leaders post directly. Posts can repeat

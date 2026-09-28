@@ -8,8 +8,8 @@
 // so a ward can add, rename or remove classes at any time without editing this file.
 window.NP_CONFIG = {
   wardName: 'Your Ward',
-  supabaseUrl: 'https://YOUR-PROJECT.supabase.co',
-  supabaseAnonKey: 'YOUR-ANON-KEY',
+  supabaseUrl: 'https://yuhkcizuncjamnliykry.supabase.co',
+  supabaseAnonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl1aGtjaXp1bmNqYW1ubGl5a3J5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA1NDc4NTQsImV4cCI6MjEwNjEyMzg1NH0.4RnXm6cpAiEk7jY__2UBNOTwX8kLx135w7CgZlIrUqU',
   timeZone: 'America/New_York',
   // Leaders › Callings: "Refresh from Google Sheets" posts to the Apps Script web app
   // (scripts/announcements.gs → Deploy → Web app). Leave empty until it is deployed.
